@@ -2,51 +2,54 @@ package com.example.tanaman
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.autofill.AutofillManager
-import android.widget.Button
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.example.tanaman.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 class MainActivity : AppCompatActivity() {
-    lateinit var auth: FirebaseAuth
-    lateinit var button: Button
-    lateinit var textView: TextView
-    lateinit var user: FirebaseUser
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var auth: FirebaseAuth
+    private var user: FirebaseUser? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        // Setup Firebase Authentication
         auth = FirebaseAuth.getInstance()
-        button = findViewById(R.id.logout)
-        textView = findViewById(R.id.user_details)
-        val user = auth.currentUser
+        user = auth.currentUser
 
-        if(user == null) {
+        if (user == null) {
+            // Jika user belum login, redirect ke layar Login
             val intent = Intent(applicationContext, Login::class.java)
             startActivity(intent)
             finish()
-        }
-        else {
-            textView.setText(user.email)
+        } else {
+            // Menampilkan email user
+            binding.userDetails.text = user?.email // Menggunakan safe call dengan `?`
         }
 
-        button.setOnClickListener{
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(applicationContext, Login::class.java)
-            startActivity(intent)
-            finish()
+        // Setup listener untuk BottomNavigationView
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.home -> replaceFragment(Home())
+                R.id.kalender -> replaceFragment(Kalender())
+                R.id.plant -> replaceFragment(Plant_Storage())
+                R.id.profile -> replaceFragment(Profile())
+                else -> {}
+            }
+            true
         }
+    }
+
+    // Fungsi helper untuk mengganti fragment
+    private fun replaceFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout, fragment)
+        fragmentTransaction.commit()
     }
 }
