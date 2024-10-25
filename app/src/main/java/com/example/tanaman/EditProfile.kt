@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class EditProfile : Fragment() {
     private lateinit var auth: FirebaseAuth
@@ -50,19 +51,22 @@ class EditProfile : Fragment() {
             if (newName.isNotEmpty()) {
                 user?.let {
                     val userRef = db.collection("users").document(it.uid)
-                    userRef.update("name", newName)
+                    userRef.set(mapOf("name" to newName), SetOptions.merge())
                         .addOnSuccessListener {
-                            Toast.makeText(context, "Name saved successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Name saved successfully", Toast.LENGTH_SHORT)
+                                .show()
                             parentFragmentManager.popBackStack() // Go back to Profile
                         }
                         .addOnFailureListener {
-                            Toast.makeText(context, "Failed to save name", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Failed to save name", Toast.LENGTH_SHORT)
+                                .show()
                         }
                 }
             } else {
                 Toast.makeText(context, "Name cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         return view
     }
