@@ -3,15 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
     tools:context=".Kalender">
 
-    <!-- INI NANTI DI UPDATE KALENDER NYA -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/calendar_text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Kalender Fragment"
-        android:textSize="26dp"
-        android:layout_gravity="center"/>
+        android:layout_margin="20dp"
+        android:text="@string/mycalendar"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <CalendarView
+        android:id="@+id/calendar_view"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </FrameLayout>
