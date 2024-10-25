@@ -16,4 +16,6 @@
     <string name="calendar">calendar</string>
     <string name="home">home</string>
     <string name="mycalendar">MyCalendar</string>
+    <string name="plants">Plants</string>
+    <string name="tanaman">Tanaman</string>
 </resources>
