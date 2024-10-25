@@ -28,22 +28,20 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         } else {
-            // Menampilkan email user
-            // Menggunakan safe call dengan `?`
+            // Menampilkan email user (opsional)
             // binding.userDetails.text = user?.email
-
-            // biar langsung ke home
+            // Ganti fragment home jika user sudah login
             replaceFragment(Home())
         }
 
         // Setup listener untuk BottomNavigationView
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            when (it.itemId) {
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
                 R.id.home -> replaceFragment(Home())
                 R.id.kalender -> replaceFragment(Kalender())
                 R.id.plant -> replaceFragment(Plant_Storage())
                 R.id.profile -> replaceFragment(Profile())
-                else -> {}
+                else -> false
             }
             true
         }
