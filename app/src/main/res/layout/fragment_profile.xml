@@ -19,17 +19,28 @@
             android:layout_marginTop="50dp"
             android:src="@drawable/baseline_account_circle_24" />
 
-        <!-- User Details TextView -->
+        <!-- Name TextView -->
         <TextView
-            android:id="@+id/user_details"
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/profile_image"
+            android:layout_below="@id/profile_image"
             android:layout_centerHorizontal="true"
-            android:text="@string/user"
+            android:text="Name"
             android:textAlignment="center"
             android:textSize="25sp"
             android:textStyle="bold" />
+
+        <!-- Edit Profile Button -->
+        <Button
+            android:id="@+id/edit_profile_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/logout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="25dp"
+            android:backgroundTint="@color/dark_primary"
+            android:text="@string/edit_profile" />
 
         <!-- Logout Button -->
         <Button
@@ -42,5 +53,4 @@
             android:backgroundTint="@color/red"
             android:text="@string/logout" />
     </RelativeLayout>
-
 </FrameLayout>

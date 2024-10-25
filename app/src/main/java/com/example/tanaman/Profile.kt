@@ -10,36 +10,15 @@ import android.widget.Button
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlin.math.log
+import com.google.firebase.firestore.FirebaseFirestore
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Profile.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Profile : Fragment() {
-    // declare dulu yang mau dipake
     private lateinit var auth: FirebaseAuth
     private var user: FirebaseUser? = null
-    private lateinit var userDetailsTextView: TextView
+    private lateinit var userNameTextView: TextView
+    private lateinit var editProfileButton: Button
     private lateinit var logoutButton: Button
-
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,22 +26,37 @@ class Profile : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        // setup auth firebase
+        // Initialize Firebase Auth and get the current user
         auth = FirebaseAuth.getInstance()
         user = auth.currentUser
 
-        // setup view
-        userDetailsTextView = view.findViewById(R.id.user_details)
+        // Bind UI elements
+        userNameTextView = view.findViewById(R.id.user_name)
+        editProfileButton = view.findViewById(R.id.edit_profile_button)
         logoutButton = view.findViewById(R.id.logout)
 
-        // set text view
+        // Load user name from Firestore
         user?.let {
-            userDetailsTextView.text = it.email
-        } ?: run {
-            userDetailsTextView.text = "User not logged in"
+            db.collection("users").document(it.uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.contains("name")) {
+                        userNameTextView.text = document.getString("name") ?: "No Name"
+                    } else {
+                        userNameTextView.text = "No Name"
+                    }
+                }
         }
 
-        // set logout button
+        // Set edit profile button to open EditProfile fragment
+        editProfileButton.setOnClickListener {
+            // Navigate to EditProfile fragment
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame_layout, EditProfile.newInstance())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // Set logout button to sign out
         logoutButton.setOnClickListener {
             auth.signOut()
             val intent = Intent(requireContext(), Login::class.java)
@@ -70,27 +64,11 @@ class Profile : Fragment() {
             activity?.finish()
         }
 
-        // inflate layout fragment ini
         return view
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Profile.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Profile().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() = Profile()
     }
 }
