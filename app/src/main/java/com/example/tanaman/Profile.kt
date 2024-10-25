@@ -1,10 +1,16 @@
 package com.example.tanaman
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,6 +23,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class Profile : Fragment() {
+    // declare dulu yang mau dipake
+    private lateinit var auth: FirebaseAuth
+    private var user: FirebaseUser? = null
+    private lateinit var userDetailsTextView: TextView
+    private lateinit var logoutButton: Button
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -33,8 +45,33 @@ class Profile : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+
+        // setup auth firebase
+        auth = FirebaseAuth.getInstance()
+        user = auth.currentUser
+
+        // setup view
+        userDetailsTextView = view.findViewById(R.id.user_details)
+        logoutButton = view.findViewById(R.id.logout)
+
+        // set text view
+        user?.let {
+            userDetailsTextView.text = it.email
+        } ?: run {
+            userDetailsTextView.text = "User not logged in"
+        }
+
+        // set logout button
+        logoutButton.setOnClickListener {
+            auth.signOut()
+            val intent = Intent(requireContext(), Login::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
+
+        // inflate layout fragment ini
+        return view
     }
 
     companion object {

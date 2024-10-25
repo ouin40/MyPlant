@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="15dp"
     tools:context=".Registration">
 
+    <!--judul register-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,10 +19,13 @@
         android:textSize="25sp"
         android:textStyle="bold" />
 
+    <!--input register-->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="25dp">
 
+        <!--input text email-->
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
             android:layout_width="match_parent"
@@ -31,10 +34,13 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--ini yg password-->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="25dp">
 
+        <!--input passwordnya-->
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
             android:layout_width="match_parent"
@@ -43,26 +49,32 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--buat loding-->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
+    <!--buat button register-->
     <Button
         android:id="@+id/btn_register"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/primary"
         android:text="@string/register" />
 
+    <!--buat textview buat login-->
     <TextView
         android:id="@+id/loginNow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/click_to_login"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textColor="@color/accent"
+        android:textSize="15sp" />
 
 </LinearLayout>

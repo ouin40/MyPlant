@@ -29,7 +29,11 @@ class MainActivity : AppCompatActivity() {
             finish()
         } else {
             // Menampilkan email user
-            binding.userDetails.text = user?.email // Menggunakan safe call dengan `?`
+            // Menggunakan safe call dengan `?`
+            // binding.userDetails.text = user?.email
+
+            // biar langsung ke home
+            replaceFragment(Home())
         }
 
         // Setup listener untuk BottomNavigationView
