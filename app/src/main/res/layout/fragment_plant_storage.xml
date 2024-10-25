@@ -26,6 +26,7 @@
             android:layout_height="200dp"
             android:src="@drawable/plant1"
             android:layout_gravity="center"
+            android:contentDescription="@string/tanaman"
             />
 
         <TextView
@@ -41,7 +42,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Plant"
+        android:text="@string/add_plant"
         android:id="@+id/addPlant"
         android:layout_marginBottom="50dp"
         android:backgroundTint="@color/dark_primary"

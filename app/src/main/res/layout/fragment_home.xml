@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:contentDescription="MyPlant Logo"
+            android:contentDescription="@string/myplant_logo"
             android:src="@drawable/myplant_text" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_below="@+id/logo"
             android:layout_centerHorizontal="true"
             android:paddingTop="35dp"
-            android:text="is currently under development"
+            android:text="@string/desc"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
