@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "99122495104",
+    "firebase_url": "https://myplantmap-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "myplantmap",
     "storage_bucket": "myplantmap.appspot.com"
   },
