@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
-class PlantImageAdapter(private val imageList: ArrayList<Bitmap>) :
+class PlantImageAdapter(private val imageList: List<Bitmap>) :
     RecyclerView.Adapter<PlantImageAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

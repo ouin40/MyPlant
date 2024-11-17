@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Plant_Storage">
 
+    <!-- Judul utama -->
     <TextView
         android:id="@+id/judulstr"
         android:layout_width="match_parent"
@@ -14,14 +14,15 @@
         android:textSize="40sp"
         android:textStyle="bold" />
 
+    <!-- RecyclerView untuk daftar kategori -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/image_recycler_view"
+        android:id="@+id/category_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/judulstr"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="80dp"
+        android:padding="8dp" />
 
+    <!-- Tombol tambah tanaman -->
     <Button
         android:id="@+id/addPlant"
         android:layout_width="wrap_content"

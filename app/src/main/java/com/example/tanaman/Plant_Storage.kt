@@ -1,11 +1,8 @@
 package com.example.tanaman
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class Plant_Storage : Fragment() {
-    private lateinit var addPlantButton: Button
     private lateinit var recyclerView: RecyclerView
-    private val imageList = ArrayList<Bitmap>()
-    private lateinit var adapter: PlantImageAdapter
+    private lateinit var addPlantButton: Button
+    private val categories = arrayListOf<Category>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,43 +23,32 @@ class Plant_Storage : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_plant_storage, container, false)
 
+        recyclerView = view.findViewById(R.id.category_recycler_view)
         addPlantButton = view.findViewById(R.id.addPlant)
-        recyclerView = view.findViewById(R.id.image_recycler_view)
 
-        // Set up RecyclerView with adapter
-        adapter = PlantImageAdapter(imageList)
-        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        recyclerView.adapter = adapter
+        // Dummy Data untuk kategori dan tanaman
+        val samplePlants1 = listOf(
+            BitmapFactory.decodeResource(resources, R.drawable.plant1),
+            BitmapFactory.decodeResource(resources, R.drawable.plant2),
+            BitmapFactory.decodeResource(resources, R.drawable.plant3)
+        )
+        val samplePlants2 = listOf(
+            BitmapFactory.decodeResource(resources, R.drawable.plant4),
+            BitmapFactory.decodeResource(resources, R.drawable.plant5),
+            BitmapFactory.decodeResource(resources, R.drawable.plant6)
+        )
 
-        // Add plant button opens the camera
+        categories.add(Category("Dapur", samplePlants1))
+        categories.add(Category("Ruang Tamu", samplePlants2))
+
+        // Set up RecyclerView untuk kategori
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = CategoryAdapter(categories)
+
         addPlantButton.setOnClickListener {
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+            Toast.makeText(context, "Add Plant button clicked!", Toast.LENGTH_SHORT).show()
         }
-
-        // Test with a sample image if available
-        val sampleBitmap = BitmapFactory.decodeResource(resources, R.drawable.plant1)
-        imageList.add(sampleBitmap)
-        adapter.notifyDataSetChanged()
 
         return view
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as? Bitmap
-            if (imageBitmap != null) {
-                imageList.add(imageBitmap)
-                adapter.notifyDataSetChanged()
-                Toast.makeText(context, "Image added to list", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "No image captured", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    companion object {
-        private const val REQUEST_IMAGE_CAPTURE = 1
     }
 }
