@@ -23,4 +23,8 @@
     <string name="add_plant">Add Plant</string>
     <string name="save">Save</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="submit">Submit</string>
+    <string name="already_have_account">Already have account</string>
+    <string name="login_here">Login here</string>
 </resources>

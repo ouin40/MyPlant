@@ -22,7 +22,8 @@ class Login : AppCompatActivity() {
     lateinit var buttonLogin: Button
     lateinit var auth: FirebaseAuth
     lateinit var progressBar: ProgressBar
-    lateinit var textView: TextView
+    lateinit var textViewReg: TextView
+    lateinit var textViewForgor: TextView
 
     public override fun onStart() {
         super.onStart()
@@ -51,10 +52,17 @@ class Login : AppCompatActivity() {
         buttonLogin = findViewById(R.id.btn_login)
         auth = FirebaseAuth.getInstance()
         progressBar = findViewById(R.id.progressBar)
-        textView = findViewById(R.id.registerNow)
+        textViewReg = findViewById(R.id.registerNow)
+        textViewForgor = findViewById(R.id.forgor)
 
-        textView.setOnClickListener {
+        textViewReg.setOnClickListener {
             val intent = Intent(applicationContext, Registration::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        textViewForgor.setOnClickListener {
+            val intent = Intent(applicationContext, Forgor::class.java)
             startActivity(intent)
             finish()
         }
