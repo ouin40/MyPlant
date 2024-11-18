@@ -45,7 +45,7 @@ class Plant_Storage : Fragment() {
         recyclerView.adapter = CategoryAdapter(categories)
 
         addPlantButton.setOnClickListener {
-            Toast.makeText(context, "Add Plant button clicked!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Camera opened", Toast.LENGTH_SHORT).show()
         }
 
         return view
