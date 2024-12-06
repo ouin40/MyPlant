@@ -12,13 +12,22 @@
         android:layout_margin="20dp"
         android:text="@string/mycalendar"
         android:textSize="40sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
 
-    <CalendarView
-        android:id="@+id/calendar_view"
-        android:layout_marginHorizontal="20dp"
+        />
+
+<!--    <CalendarView-->
+<!--        android:id="@+id/calendar_view"-->
+<!--        android:layout_marginHorizontal="20dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center" />-->
+
+    <com.applandeo.materialcalendarview.CalendarView
+        android:id="@+id/calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_marginTop="100dp"
+        />
 
 </FrameLayout>

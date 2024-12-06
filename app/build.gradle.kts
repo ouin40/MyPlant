@@ -39,6 +39,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+//    repositories {
+//        mavenCentral()
+//    }
 }
 
 dependencies {
@@ -56,4 +59,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    //CALENDAR
+    //implementation(libs.material.calendar.view)
+    implementation("com.applandeo:material-calendar-view:1.9.2")
 }
