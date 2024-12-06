@@ -3,6 +3,8 @@
     <style name="Base.Theme.Tanaman" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:statusBarColor">@color/dark_primary</item>
+        <item name="android:navigationBarColor">@color/dark_primary</item>
     </style>
 
     <style name="Theme.Tanaman" parent="Base.Theme.Tanaman" />
