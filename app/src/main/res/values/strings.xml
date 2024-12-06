@@ -28,4 +28,6 @@
     <string name="already_have_account">Already have account</string>
     <string name="login_here">Login here</string>
     <string name="nothing_to_do">Nothing To Do</string>
+    <string name="watering">Watering</string>
+    <string name="task">Task</string>
 </resources>

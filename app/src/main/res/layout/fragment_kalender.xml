@@ -1,49 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Kalender">
+    android:background="@color/putih"
+    android:orientation="vertical">
 
+    <!-- Title -->
     <TextView
-        android:id="@+id/calendar_text"
+        android:id="@+id/tv_calendar_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="16dp"
         android:text="@string/mycalendar"
-        android:textSize="40sp"
-        android:textStyle="bold"
+        android:textColor="@color/black_neutral"
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
-        />
-
-    <!--    <CalendarView-->
-    <!--        android:id="@+id/calendar_view"-->
-    <!--        android:layout_marginHorizontal="20dp"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_gravity="center" />-->
-
+    <!-- Calendar View -->
     <com.applandeo.materialcalendarview.CalendarView
-        android:id="@+id/calendar"
+        android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:headerColor="@color/primary" />
+        app:daysLabelsColor="@color/black_neutral"
+        app:headerColor="@color/primary"
+        app:headerLabelColor="@color/putih"
+        app:selectionColor="@color/primary"
+        app:todayLabelColor="@color/primary" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
         >
-
+        <!-- Watering Section -->
         <TextView
+            android:id="@+id/tv_watering_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nothing_to_do"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
-            />
-    </RelativeLayout>
+            android:layout_marginBottom="8dp"
+            android:text="@string/watering"
+            android:textColor="@color/black_neutral"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
+        <!-- Watering List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_watering"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:nestedScrollingEnabled="false" />
+
+        <!-- Task Section -->
+        <TextView
+            android:id="@+id/tv_task_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/task"
+            android:textColor="@color/black_neutral"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Task List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_tasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/taskRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            tools:listitem="@layout/item_watering_task" />
+    </LinearLayout>
 
 </LinearLayout>
