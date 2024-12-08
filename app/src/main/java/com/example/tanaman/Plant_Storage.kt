@@ -49,7 +49,7 @@ class Plant_Storage : Fragment() {
         recyclerView = view.findViewById(R.id.category_recycler_view)
         addPlantButton = view.findViewById(R.id.addPlant)
 
-        // Meminta izin untuk menggunakan kamera jika belum diberikan
+        // Request camera permission if not granted
         if (ContextCompat.checkSelfPermission(
                 requireContext(), android.Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
@@ -60,7 +60,7 @@ class Plant_Storage : Fragment() {
             )
         }
 
-        // Ambil kategori tanaman dari Firestore
+        // Get categories from Firestore
         firestore.collection("categories")
             .get()
             .addOnSuccessListener { documents ->
@@ -75,8 +75,12 @@ class Plant_Storage : Fragment() {
                 dummyCategoryIndex = 0
             }
 
-        // Mengatur click listener untuk tombol add plant
+        // Set click listener for the "Add Plant" button
         addPlantButton.setOnClickListener {
+            // Hide the "Add Plant" button
+            addPlantButton.visibility = View.GONE
+
+            // Replace current fragment with Plant_Add
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, Plant_Add())
             transaction.addToBackStack(null)
@@ -117,9 +121,9 @@ class Plant_Storage : Fragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(context, "Camera permission granted", Toast.LENGTH_SHORT).show()
             } else {
-                // Provide an explanation or guide user to settings
-                Toast.makeText(context, "Camera permission denied. Please allow permission to capture images.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Camera permission denied", Toast.LENGTH_LONG).show()
             }
         }
     }
 }
+
