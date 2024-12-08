@@ -1,0 +1,134 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+
+    <!-- LinearLayout untuk Menyusun Konten -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <!-- ImageView untuk Menampilkan Gambar Tanaman -->
+        <ImageView
+            android:id="@+id/plant_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerCrop" />
+
+        <!-- LinearLayout untuk Tombol Kamera dan Galeri (Berada bersebelahan) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <!-- Button untuk Mengambil Foto -->
+            <Button
+                android:id="@+id/camera_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Take Photo" />
+
+            <!-- Button untuk Memilih Gambar dari Galeri -->
+            <Button
+                android:id="@+id/gallery_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Choose from Gallery" />
+        </LinearLayout>
+
+        <!-- EditText untuk Nama Tanaman -->
+        <EditText
+            android:id="@+id/plant_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:focusable="true"
+            android:hint="Enter plant name"
+            android:padding="16dp"
+            android:textSize="18sp"
+            android:minHeight="48dp"
+            android:importantForAccessibility="yes" />
+
+        <!-- Spinner untuk Memilih Kategori Tanaman -->
+        <Spinner
+            android:id="@+id/plantCategorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:minHeight="48dp"
+            android:spinnerMode="dropdown" />
+
+        <!-- EditText untuk Deskripsi Tanaman -->
+        <EditText
+            android:id="@+id/plantDescriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:focusable="true"
+            android:hint="Enter plant description"
+            android:minHeight="48dp"
+            android:textSize="18sp" />
+
+        <!-- EditText untuk Suhu Tanaman -->
+        <EditText
+            android:id="@+id/plantTemperatureEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:focusable="true"
+            android:hint="Enter plant temperature"
+            android:minHeight="48dp"
+            android:textSize="18sp" />
+
+        <!-- EditText untuk Frekuensi Penyiraman -->
+        <EditText
+            android:id="@+id/plantWateringFrequencyEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:focusable="true"
+            android:hint="Enter watering frequency"
+            android:minHeight="48dp"
+            android:textSize="18sp" />
+
+        <!-- Switch untuk Menandakan Bahaya Tanaman -->
+        <Switch
+            android:id="@+id/plantDangerSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:minHeight="48dp"
+            android:text="Is this plant dangerous?" />
+
+        <!-- SeekBar untuk Tingkat Cahaya -->
+        <SeekBar
+            android:id="@+id/lightLevelSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:max="100"
+            android:minHeight="48dp"
+            android:progress="50" />
+
+        <!-- Button untuk Menyimpan Tanaman -->
+        <Button
+            android:id="@+id/save_plant_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:text="Save Plant" />
+
+    </LinearLayout>
+</ScrollView>

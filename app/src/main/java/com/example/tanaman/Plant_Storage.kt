@@ -14,10 +14,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import android.content.pm.PackageManager
-
 
 class Plant_Storage : Fragment() {
 
@@ -25,11 +25,11 @@ class Plant_Storage : Fragment() {
     private lateinit var addPlantButton: Button
     private val categories = arrayListOf<Category>()
     private val storage = FirebaseStorage.getInstance()
-    private val dummyCategoryIndex = 0 // Indeks kategori untuk dummy data
+    private val firestore = FirebaseFirestore.getInstance()
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 1001
+    private var dummyCategoryIndex: Int = -1  // Ensure this is properly set before use
 
-    // Launcher untuk mengambil gambar
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
@@ -60,46 +60,55 @@ class Plant_Storage : Fragment() {
             )
         }
 
-        // Dummy data untuk kategori dan tanaman
-        val samplePlants1 = listOf(
-            BitmapFactory.decodeResource(resources, R.drawable.plant1),
-            BitmapFactory.decodeResource(resources, R.drawable.plant2),
-            BitmapFactory.decodeResource(resources, R.drawable.plant3)
-        )
-        categories.add(Category("Dapur", samplePlants1.toMutableList()))
-
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = CategoryAdapter(categories)
+        // Ambil kategori tanaman dari Firestore
+        firestore.collection("categories")
+            .get()
+            .addOnSuccessListener { documents ->
+                categories.clear()
+                for (document in documents) {
+                    val categoryName = document.getString("name") ?: ""
+                    val plantList = mutableListOf<Bitmap>()
+                    categories.add(Category(categoryName, plantList))
+                }
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = CategoryAdapter(categories)
+                dummyCategoryIndex = 0
+            }
 
         // Mengatur click listener untuk tombol add plant
         addPlantButton.setOnClickListener {
-            // Meluncurkan kamera untuk mengambil gambar
-            cameraLauncher.launch(null)
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragment_container, Plant_Add())
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         return view
     }
 
-    // Fungsi untuk mengupload gambar ke Firebase
     private fun uploadToFirebase(bitmap: Bitmap) {
         val storageRef = storage.reference.child("plants/${System.currentTimeMillis()}.jpg")
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
 
-        // Mengupload gambar ke Firebase Storage
         storageRef.putBytes(data)
             .addOnSuccessListener {
                 Toast.makeText(context, "Photo uploaded!", Toast.LENGTH_SHORT).show()
-                categories[dummyCategoryIndex].plants.add(bitmap)
-                recyclerView.adapter?.notifyDataSetChanged()
+
+                // Ensure dummyCategoryIndex is valid before using it
+                if (dummyCategoryIndex >= 0 && dummyCategoryIndex < categories.size) {
+                    categories[dummyCategoryIndex].plants.add(bitmap)
+                    recyclerView.adapter?.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(context, "Category not found", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Upload failed!", Toast.LENGTH_SHORT).show()
             }
     }
 
-    // Menangani hasil izin yang diminta
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -108,7 +117,8 @@ class Plant_Storage : Fragment() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(context, "Camera permission granted", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                // Provide an explanation or guide user to settings
+                Toast.makeText(context, "Camera permission denied. Please allow permission to capture images.", Toast.LENGTH_LONG).show()
             }
         }
     }
