@@ -1,93 +1,98 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/putih"
-    android:orientation="vertical">
-
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tv_calendar_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="16dp"
-        android:text="@string/mycalendar"
-        android:textColor="@color/black_neutral"
-        android:textSize="35sp"
-        android:textStyle="bold" />
-
-    <!-- Calendar View -->
-    <com.applandeo.materialcalendarview.CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:daysLabelsColor="@color/black_neutral"
-        app:headerColor="@color/primary"
-        app:headerLabelColor="@color/putih"
-        app:selectionColor="@color/primary"
-        app:todayLabelColor="@color/primary" />
-
-    <Button
-        android:id="@+id/btn_add_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/primary"
-        android:text="@string/add_watering_task"
-        android:textColor="@color/putih"
-        android:layout_gravity="center" />
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="20dp"
-        >
-        <!-- Watering Section -->
+        android:orientation="vertical">
+
+        <!-- Title -->
         <TextView
-            android:id="@+id/tv_watering_title"
+            android:id="@+id/tv_calendar_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/watering"
+            android:text="@string/mycalendar"
+            android:padding="20dp"
             android:textColor="@color/black_neutral"
-            android:textSize="20sp"
+            android:textSize="35sp"
             android:textStyle="bold" />
 
-        <!-- Watering List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_watering"
+        <!-- Calendar View -->
+        <com.applandeo.materialcalendarview.CalendarView
+            android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:nestedScrollingEnabled="false" />
+            app:daysLabelsColor="@color/black_neutral"
+            app:headerColor="@color/primary"
+            app:headerLabelColor="@color/putih"
+            app:selectionColor="@color/primary"
+            app:todayLabelColor="@color/primary" />
 
-        <!-- Task Section -->
-        <TextView
-            android:id="@+id/tv_task_title"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_add_task"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="@string/task"
-            android:textColor="@color/black_neutral"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:backgroundTint="@color/primary"
+            android:text="@string/add_watering_task"
+            android:textColor="@color/putih"
+            android:layout_margin="20dp"
+            android:layout_gravity="center" />
 
-        <!-- Task List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_tasks"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            >
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/taskRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            tools:listitem="@layout/item_watering_task" />
+            <!-- Watering Section -->
+            <TextView
+                android:id="@+id/tv_watering_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/watering"
+                android:textColor="@color/black_neutral"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Watering List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_watering"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Task Section -->
+            <TextView
+                android:id="@+id/tv_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/task"
+                android:textColor="@color/black_neutral"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- Task List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_tasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <!-- Additional RecyclerView (possibly for tasks or other items) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/taskRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                tools:listitem="@layout/item_watering_task" />
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
