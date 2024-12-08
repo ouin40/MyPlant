@@ -1,53 +1,49 @@
 package com.example.tanaman
 
-import android.app.Activity
-import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import android.graphics.BitmapFactory
-import androidx.activity.result.contract.ActivityResultContracts
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class Plant_Add : Fragment() {
 
     private lateinit var plantNameEditText: EditText
     private lateinit var plantDescriptionEditText: EditText
     private lateinit var plantCategorySpinner: Spinner
-    private lateinit var plantWateringFrequencyEditText: EditText
-    private lateinit var plantTemperatureEditText: EditText
-    private lateinit var plantDangerSwitch: Switch
-    private lateinit var lightLevelSeekBar: SeekBar
+    private lateinit var wateringFrequencyEditText: EditText
+    private lateinit var temperatureEditText: EditText
+    private lateinit var dangerSwitch: Switch
+    private lateinit var lightSeekBar: SeekBar
     private lateinit var savePlantButton: Button
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
     private lateinit var plantImageView: ImageView
     private var selectedImage: Bitmap? = null
+    private var selectedCategory: String = ""
 
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
-    private val categories = mutableListOf<String>()
-    private var selectedCategory: String = ""
 
-    // Camera launcher to capture image
+    // Launcher for capturing image
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
         bitmap?.let {
             selectedImage = it
-            plantImageView.setImageBitmap(it) // Set captured image to ImageView
-        } ?: run {
-            Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT).show()
-        }
+            plantImageView.setImageBitmap(it)
+        } ?: Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT).show()
     }
 
-    // Gallery launcher to pick image
+    // Launcher for selecting image from gallery
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
@@ -55,7 +51,7 @@ class Plant_Add : Fragment() {
             val inputStream = context?.contentResolver?.openInputStream(it)
             val bitmap = BitmapFactory.decodeStream(inputStream)
             selectedImage = bitmap
-            plantImageView.setImageBitmap(bitmap) // Set selected image to ImageView
+            plantImageView.setImageBitmap(bitmap)
         }
     }
 
@@ -69,75 +65,79 @@ class Plant_Add : Fragment() {
         plantNameEditText = view.findViewById(R.id.plant_name)
         plantDescriptionEditText = view.findViewById(R.id.plantDescriptionEditText)
         plantCategorySpinner = view.findViewById(R.id.plantCategorySpinner)
-        plantWateringFrequencyEditText = view.findViewById(R.id.plantWateringFrequencyEditText)
-        plantTemperatureEditText = view.findViewById(R.id.plantTemperatureEditText)
-        plantDangerSwitch = view.findViewById(R.id.plantDangerSwitch)
-        lightLevelSeekBar = view.findViewById(R.id.lightLevelSeekBar)
+        wateringFrequencyEditText = view.findViewById(R.id.plantWateringFrequencyEditText)
+        temperatureEditText = view.findViewById(R.id.plantTemperatureEditText)
+        dangerSwitch = view.findViewById(R.id.plantDangerSwitch)
+        lightSeekBar = view.findViewById(R.id.lightLevelSeekBar)
         savePlantButton = view.findViewById(R.id.save_plant_button)
         cameraButton = view.findViewById(R.id.camera_button)
         galleryButton = view.findViewById(R.id.gallery_button)
         plantImageView = view.findViewById(R.id.plant_image)
 
-        // Load categories from Firestore
-        loadCategories()
+        // Setup categories for spinner
+        val categories = listOf(
+            "Bedroom",
+            "Living Room",
+            "Kitchen",
+            "Dining Room",
+            "Laundry Room"
+        )
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        plantCategorySpinner.adapter = adapter
 
-        // Spinner item selection listener
+        // Set listener for spinner
         plantCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 selectedCategory = categories[position]
             }
 
-            override fun onNothingSelected(parentView: AdapterView<*>?) {
-                selectedCategory = categories[0] // Default to first category
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                selectedCategory = categories[0]
             }
         }
 
-        // Open camera when button is clicked
-        cameraButton.setOnClickListener {
-            cameraLauncher.launch(null)
-        }
+        // Camera button functionality
+        cameraButton.setOnClickListener { cameraLauncher.launch(null) }
 
-        // Open gallery when button is clicked
-        galleryButton.setOnClickListener {
-            galleryLauncher.launch("image/*")
-        }
+        // Gallery button functionality
+        galleryButton.setOnClickListener { galleryLauncher.launch("image/*") }
 
-        // Save plant data when button is clicked
+        // Save plant button functionality
         savePlantButton.setOnClickListener {
             val plantName = plantNameEditText.text.toString()
             val plantDescription = plantDescriptionEditText.text.toString()
-            val wateringFrequency = plantWateringFrequencyEditText.text.toString()
-            val temperature = plantTemperatureEditText.text.toString()
-            val isDangerous = plantDangerSwitch.isChecked
-            val lightLevel = lightLevelSeekBar.progress
+            val wateringFrequency = wateringFrequencyEditText.text.toString()
+            val temperature = temperatureEditText.text.toString()
+            val isDangerous = dangerSwitch.isChecked
+            val lightLevel = lightSeekBar.progress
 
             if (plantName.isNotEmpty() && plantDescription.isNotEmpty() && selectedImage != null) {
-                savePlantData(plantName, plantDescription, selectedCategory, wateringFrequency, temperature, isDangerous, lightLevel)
+                savePlantData(
+                    plantName,
+                    plantDescription,
+                    selectedCategory,
+                    wateringFrequency,
+                    temperature,
+                    isDangerous,
+                    lightLevel
+                )
             } else {
-                Toast.makeText(context, "Please fill all fields and select an image.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Please fill all fields and add an image.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         return view
-    }
-
-    // Load plant categories from Firestore
-    private fun loadCategories() {
-        firestore.collection("categories")
-            .get()
-            .addOnSuccessListener { documents ->
-                categories.clear()
-                for (document in documents) {
-                    val categoryName = document.getString("name") ?: ""
-                    categories.add(categoryName)
-                }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                plantCategorySpinner.adapter = adapter
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to load categories", Toast.LENGTH_SHORT).show()
-            }
     }
 
     // Save plant data to Firestore
@@ -157,8 +157,13 @@ class Plant_Add : Fragment() {
 
         firestore.collection("plants")
             .add(plantData)
-            .addOnSuccessListener {
-                selectedImage?.let { image -> uploadToFirebase(image) } // Upload image after saving data
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(context, "Plant saved successfully!", Toast.LENGTH_SHORT).show()
+
+                // Upload image to Firebase Storage
+                selectedImage?.let { image ->
+                    uploadToFirebase(image, documentReference.id)
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to add plant", Toast.LENGTH_SHORT).show()
@@ -166,18 +171,18 @@ class Plant_Add : Fragment() {
     }
 
     // Upload image to Firebase Storage
-    private fun uploadToFirebase(bitmap: Bitmap) {
-        val storageRef = storage.reference.child("plants/images/${System.currentTimeMillis()}.jpg")
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
+    private fun uploadToFirebase(image: Bitmap, documentId: String) {
+        val outputStream = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val imageData = outputStream.toByteArray()
 
-        storageRef.putBytes(data)
+        val storageRef = storage.reference.child("plant_images/$documentId.jpg")
+        storageRef.putBytes(imageData)
             .addOnSuccessListener {
-                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Image uploaded successfully!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to upload image.", Toast.LENGTH_SHORT).show()
             }
     }
 }
