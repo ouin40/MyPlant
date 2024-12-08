@@ -30,4 +30,7 @@
     <string name="nothing_to_do">Nothing To Do</string>
     <string name="watering">Watering</string>
     <string name="task">Task</string>
+    <string name="add_watering_task">Add Watering Task</string>
+    <string name="plant_name">Plant name</string>
+    <string name="water_quantity">Water quantity</string>
 </resources>
