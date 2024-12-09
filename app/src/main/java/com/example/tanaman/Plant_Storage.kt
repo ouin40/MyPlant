@@ -18,27 +18,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import android.content.pm.PackageManager
+import android.util.Log
 
 class Plant_Storage : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var addPlantButton: Button
     private val categories = arrayListOf<Category>()
-    private val storage = FirebaseStorage.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
-
-    private val CAMERA_PERMISSION_REQUEST_CODE = 1001
-    private var dummyCategoryIndex: Int = -1  // Ensure this is properly set before use
-
-    private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap ->
-        if (bitmap != null) {
-            uploadToFirebase(bitmap)
-        } else {
-            Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,83 +33,62 @@ class Plant_Storage : Fragment() {
         val view = inflater.inflate(R.layout.fragment_plant_storage, container, false)
 
         recyclerView = view.findViewById(R.id.category_recycler_view)
-        addPlantButton = view.findViewById(R.id.addPlant)
 
-        // Request camera permission if not granted
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), android.Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(), arrayOf(android.Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_REQUEST_CODE
-            )
-        }
+        // Set up RecyclerView with a LinearLayoutManager and adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Get categories from Firestore
+        // Make sure to set the adapter after the data is ready
+        fetchCategoriesFromFirestore()
+
+        return view
+    }
+
+    private fun fetchCategoriesFromFirestore() {
         firestore.collection("categories")
             .get()
             .addOnSuccessListener { documents ->
                 categories.clear()
                 for (document in documents) {
                     val categoryName = document.getString("name") ?: ""
-                    val plantList = mutableListOf<Bitmap>()
-                    categories.add(Category(categoryName, plantList))
-                }
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.adapter = CategoryAdapter(categories)
-                dummyCategoryIndex = 0
-            }
 
-        // Set click listener for the "Add Plant" button
-        addPlantButton.setOnClickListener {
-            // Hide the "Add Plant" button
-            addPlantButton.visibility = View.GONE
+                    // Example: Fetching plants data from Firestore under each category
+                    val plantList = mutableListOf<Plant>()
+                    // Assuming plants are stored in sub-collection "plants" for each category
+                    val plantsCollection = document.reference.collection("plants")
+                    plantsCollection.get().addOnSuccessListener { plantDocuments ->
+                        for (plantDocument in plantDocuments) {
+                            val plantName = plantDocument.getString("name") ?: ""
+                            val plantDescription = plantDocument.getString("description") ?: ""
+                            val plantLightLevel = plantDocument.getLong("light_level")?.toInt() ?: 0
+                            val plantTemperature = plantDocument.getString("temperature") ?: ""
+                            val plantWateringFrequency =
+                                plantDocument.getString("watering_frequency") ?: ""
 
-            // Replace current fragment with Plant_Add
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, Plant_Add())
-            transaction.addToBackStack(null)
-            transaction.commit()
-        }
+                            val plant = Plant(
+                                plantName,
+                                plantDescription,
+                                plantLightLevel,
+                                plantTemperature,
+                                plantWateringFrequency,
+                                "" // You can pass an empty string or a valid URL here
+                            )
 
-        return view
-    }
+                            plantList.add(plant)
+                        }
 
-    private fun uploadToFirebase(bitmap: Bitmap) {
-        val storageRef = storage.reference.child("plants/${System.currentTimeMillis()}.jpg")
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
+                        // Now, set up the category with a list of Plant objects
+                        categories.add(Category(categoryName, plantList))
 
-        storageRef.putBytes(data)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Photo uploaded!", Toast.LENGTH_SHORT).show()
+                        // Set the adapter after data is fetched
+                        recyclerView.adapter =
+                            CategoryAdapter(categories, requireContext()) // Pass context here
 
-                // Ensure dummyCategoryIndex is valid before using it
-                if (dummyCategoryIndex >= 0 && dummyCategoryIndex < categories.size) {
-                    categories[dummyCategoryIndex].plants.add(bitmap)
-                    recyclerView.adapter?.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(context, "Category not found", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Upload failed!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT)
+                    .show()
             }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "Camera permission granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Camera permission denied", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 }
-
