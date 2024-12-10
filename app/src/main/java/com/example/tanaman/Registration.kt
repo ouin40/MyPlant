@@ -15,18 +15,20 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Registration : AppCompatActivity() {
+    lateinit var editTextName: TextInputEditText
     lateinit var editTextEmail: TextInputEditText
     lateinit var editTextPassword: TextInputEditText
     lateinit var buttonReg: Button
     lateinit var auth: FirebaseAuth
     lateinit var progressBar: ProgressBar
     lateinit var textView: TextView
+    private val db = FirebaseFirestore.getInstance()
 
     public override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser != null) {
             Intent(applicationContext, MainActivity::class.java).also {
@@ -46,6 +48,7 @@ class Registration : AppCompatActivity() {
             insets
         }
 
+        editTextName = findViewById(R.id.name)
         editTextEmail = findViewById(R.id.email)
         editTextPassword = findViewById(R.id.password)
         buttonReg = findViewById(R.id.btn_register)
@@ -61,38 +64,49 @@ class Registration : AppCompatActivity() {
 
         buttonReg.setOnClickListener {
             progressBar.visibility = View.VISIBLE
+            val name = editTextName.text.toString()
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
+
+            if (name.isEmpty()) {
+                editTextName.error = "Name is required"
+                editTextName.requestFocus()
+                return@setOnClickListener
+            }
             if (email.isEmpty()) {
                 editTextEmail.error = "Email is required"
                 editTextEmail.requestFocus()
-                Toast.makeText(this@Registration, "Enter Email", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (password.isEmpty()) {
                 editTextPassword.error = "Password is required"
                 editTextPassword.requestFocus()
-                Toast.makeText(this@Registration, "Enter Password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener() { task ->
+                .addOnCompleteListener { task ->
                     progressBar.visibility = View.GONE
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
-                        Toast.makeText(
-                            this@Registration,
-                            "Account created.",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                        Intent(applicationContext, MainActivity::class.java).also {
-                            startActivity(it)
-                            finish()
-                        }
+                        val user = auth.currentUser
+                        val userId = user?.uid ?: ""
+                        val userData = hashMapOf(
+                            "name" to name,
+                            "email" to email
+                        )
+
+                        db.collection("users").document(userId).set(userData)
+                            .addOnSuccessListener {
+                                Toast.makeText(this@Registration, "Account created.", Toast.LENGTH_SHORT).show()
+                                Intent(applicationContext, MainActivity::class.java).also {
+                                    startActivity(it)
+                                    finish()
+                                }
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this@Registration, "Failed to save user data.", Toast.LENGTH_SHORT).show()
+                            }
                     } else {
-                        // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(
                             this@Registration,
