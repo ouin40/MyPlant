@@ -61,8 +61,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation (libs.firebase.firestore.ktx.v2471)
-    implementation (libs.glide)
-
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 
 
     //CALENDAR
