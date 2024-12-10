@@ -1,5 +1,6 @@
 package com.example.tanaman
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class CategoryAdapter(private val categories: ArrayList<Category>) :
+class CategoryAdapter(private val categories: ArrayList<Category>, private val context: Context) :
     RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -15,9 +16,8 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
         val plantRecyclerView: RecyclerView = itemView.findViewById(R.id.plants_recycler_view)
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(context) // Use context here
             .inflate(R.layout.item_category, parent, false)
         return ViewHolder(view)
     }
@@ -26,16 +26,16 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
         val category = categories[position]
         holder.categoryTitle.text = category.name
 
-        // Mengonversi List<Bitmap> menjadi ArrayList<Bitmap>
-        val plantList = ArrayList(category.plants)
-
-        // Set up RecyclerView untuk gambar tanaman dalam kategori
+        // Set up RecyclerView for plant images in the category
         holder.plantRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        holder.plantRecyclerView.adapter = PlantImageAdapter(plantList)
+
+        // Pass a list of Plant objects instead of Bitmaps
+        holder.plantRecyclerView.adapter = PlantImageAdapter(category.plants, holder.itemView.context)
     }
 
+
     override fun getItemCount(): Int {
-        return categories.size // Mengembalikan jumlah kategori
+        return categories.size
     }
 }
