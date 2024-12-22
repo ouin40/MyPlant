@@ -12,9 +12,9 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryTitle: TextView = itemView.findViewById(R.id.category_title)
+        val categoryLocation: TextView = itemView.findViewById(R.id.category_location)
         val plantRecyclerView: RecyclerView = itemView.findViewById(R.id.plants_recycler_view)
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -25,17 +25,15 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
         holder.categoryTitle.text = category.name
+        holder.categoryLocation.text = "Location: ${category.location}"
 
-        // Mengonversi List<Bitmap> menjadi ArrayList<Bitmap>
         val plantList = ArrayList(category.plants)
-
-        // Set up RecyclerView untuk gambar tanaman dalam kategori
         holder.plantRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
         holder.plantRecyclerView.adapter = PlantImageAdapter(plantList)
     }
 
     override fun getItemCount(): Int {
-        return categories.size // Mengembalikan jumlah kategori
+        return categories.size
     }
 }

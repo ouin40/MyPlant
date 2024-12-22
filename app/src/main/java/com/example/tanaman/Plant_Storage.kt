@@ -1,23 +1,22 @@
 package com.example.tanaman
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import java.io.ByteArrayOutputStream
 import android.content.pm.PackageManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
 
 class Plant_Storage : Fragment() {
 
@@ -28,17 +27,7 @@ class Plant_Storage : Fragment() {
     private val firestore = FirebaseFirestore.getInstance()
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 1001
-    private var dummyCategoryIndex: Int = -1  // Ensure this is properly set before use
-
-    private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicturePreview()
-    ) { bitmap ->
-        if (bitmap != null) {
-            uploadToFirebase(bitmap)
-        } else {
-            Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT).show()
-        }
-    }
+    private var dummyCategoryIndex: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,7 +38,6 @@ class Plant_Storage : Fragment() {
         recyclerView = view.findViewById(R.id.category_recycler_view)
         addPlantButton = view.findViewById(R.id.addPlant)
 
-        // Request camera permission if not granted
         if (ContextCompat.checkSelfPermission(
                 requireContext(), android.Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
@@ -60,27 +48,24 @@ class Plant_Storage : Fragment() {
             )
         }
 
-        // Get categories from Firestore
         firestore.collection("categories")
             .get()
             .addOnSuccessListener { documents ->
                 categories.clear()
                 for (document in documents) {
                     val categoryName = document.getString("name") ?: ""
+                    val locationName = document.getString("location") ?: ""
                     val plantList = mutableListOf<Bitmap>()
-                    categories.add(Category(categoryName, plantList))
+                    categories.add(Category(categoryName, locationName, plantList))
                 }
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = CategoryAdapter(categories)
                 dummyCategoryIndex = 0
             }
 
-        // Set click listener for the "Add Plant" button
         addPlantButton.setOnClickListener {
-            // Hide the "Add Plant" button
             addPlantButton.visibility = View.GONE
 
-            // Replace current fragment with Plant_Add
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, Plant_Add())
             transaction.addToBackStack(null)
@@ -100,7 +85,6 @@ class Plant_Storage : Fragment() {
             .addOnSuccessListener {
                 Toast.makeText(context, "Photo uploaded!", Toast.LENGTH_SHORT).show()
 
-                // Ensure dummyCategoryIndex is valid before using it
                 if (dummyCategoryIndex >= 0 && dummyCategoryIndex < categories.size) {
                     categories[dummyCategoryIndex].plants.add(bitmap)
                     recyclerView.adapter?.notifyDataSetChanged()
@@ -126,4 +110,3 @@ class Plant_Storage : Fragment() {
         }
     }
 }
-

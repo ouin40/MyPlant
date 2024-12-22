@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="@string/plants"
+        android:text="Plants"
         android:textSize="40sp"
         android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
         android:id="@+id/addPlant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_plant"
+        android:text="Add Plant"
         android:layout_gravity="bottom|center"
         android:layout_marginBottom="50dp"
         android:backgroundTint="@color/dark_primary" />
