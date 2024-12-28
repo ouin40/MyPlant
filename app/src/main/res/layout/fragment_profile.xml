@@ -10,13 +10,34 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <!-- Profile Title -->
+        <TextView
+            android:id="@+id/profile_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Profile"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Divider Below Title -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/profile_title"
+            android:layout_marginTop="10dp"
+            android:background="#CCCCCC" />
+
+        <!-- Profile Image -->
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/profile_title"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:src="@drawable/baseline_account_circle_24" />
 
         <!-- Name TextView -->
@@ -26,9 +47,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/profile_image"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
             android:text="Name"
             android:textAlignment="center"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <!-- Edit Profile Button -->
@@ -36,11 +58,39 @@
             android:id="@+id/edit_profile_button"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_above="@id/logout"
+            android:layout_below="@id/user_name"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="25dp"
+            android:layout_marginTop="20dp"
             android:backgroundTint="@color/dark_primary"
             android:text="@string/edit_profile" />
+
+        <!-- Push Notifications Section -->
+        <LinearLayout
+            android:id="@+id/push_notifications_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_profile_button"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Push Notifications Label -->
+            <TextView
+                android:id="@+id/push_notifications_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Push notifications"
+                android:textSize="18sp" />
+
+            <!-- Push Notifications Switch -->
+            <Switch
+                android:id="@+id/push_notifications_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <!-- Logout Button -->
         <Button
