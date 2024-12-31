@@ -38,6 +38,7 @@ class Plant_Storage : Fragment() {
         recyclerView = view.findViewById(R.id.category_recycler_view)
         addPlantButton = view.findViewById(R.id.addPlant)
 
+        // Cek izin kamera
         if (ContextCompat.checkSelfPermission(
                 requireContext(), android.Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
@@ -48,6 +49,7 @@ class Plant_Storage : Fragment() {
             )
         }
 
+        // Ambil kategori tanaman dari Firestore
         firestore.collection("categories")
             .get()
             .addOnSuccessListener { documents ->
@@ -63,11 +65,12 @@ class Plant_Storage : Fragment() {
                 dummyCategoryIndex = 0
             }
 
+        // Tombol untuk berpindah ke fragment Plant_Add
         addPlantButton.setOnClickListener {
             addPlantButton.visibility = View.GONE
 
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, Plant_Add())
+            transaction.replace(R.id.fragment_container, Plant_Add())  // Pindah ke fragment Plant_Add
             transaction.addToBackStack(null)
             transaction.commit()
         }
@@ -75,6 +78,7 @@ class Plant_Storage : Fragment() {
         return view
     }
 
+    // Upload foto tanaman ke Firebase Storage
     private fun uploadToFirebase(bitmap: Bitmap) {
         val storageRef = storage.reference.child("plants/${System.currentTimeMillis()}.jpg")
         val baos = ByteArrayOutputStream()
@@ -85,6 +89,7 @@ class Plant_Storage : Fragment() {
             .addOnSuccessListener {
                 Toast.makeText(context, "Photo uploaded!", Toast.LENGTH_SHORT).show()
 
+                // Menambahkan gambar ke kategori tanaman
                 if (dummyCategoryIndex >= 0 && dummyCategoryIndex < categories.size) {
                     categories[dummyCategoryIndex].plants.add(bitmap)
                     recyclerView.adapter?.notifyDataSetChanged()
@@ -97,6 +102,7 @@ class Plant_Storage : Fragment() {
             }
     }
 
+    // Mengelola hasil permintaan izin kamera
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
