@@ -4,6 +4,5 @@ import android.graphics.Bitmap
 
 data class Category(
     val name: String,
-    val location: String,
     var plants: MutableList<Bitmap>
 )

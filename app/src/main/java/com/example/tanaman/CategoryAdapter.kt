@@ -12,7 +12,6 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val categoryTitle: TextView = itemView.findViewById(R.id.category_title)
-        val categoryLocation: TextView = itemView.findViewById(R.id.category_location)
         val plantRecyclerView: RecyclerView = itemView.findViewById(R.id.plants_recycler_view)
     }
 
@@ -25,12 +24,10 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val category = categories[position]
         holder.categoryTitle.text = category.name
-        holder.categoryLocation.text = "Location: ${category.location}"
 
-        val plantList = ArrayList(category.plants)
         holder.plantRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        holder.plantRecyclerView.adapter = PlantImageAdapter(plantList)
+        holder.plantRecyclerView.adapter = PlantImageAdapter(category.plants)
     }
 
     override fun getItemCount(): Int {

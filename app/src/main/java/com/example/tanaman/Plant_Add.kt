@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
+import android.graphics.BitmapFactory
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
 
 class Plant_Add : Fragment() {
@@ -20,10 +21,6 @@ class Plant_Add : Fragment() {
     private lateinit var plantNameEditText: EditText
     private lateinit var plantDescriptionEditText: EditText
     private lateinit var plantCategorySpinner: Spinner
-    private lateinit var plantWateringFrequencyEditText: EditText
-    private lateinit var plantTemperatureEditText: EditText
-    private lateinit var plantDangerSwitch: Switch
-    private lateinit var lightLevelSeekBar: SeekBar
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
     private lateinit var plantImageView: ImageView
@@ -34,6 +31,7 @@ class Plant_Add : Fragment() {
     private val categories = mutableListOf<String>()
     private var selectedCategory: String = ""
 
+    // Camera Launcher
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicturePreview()
     ) { bitmap ->
@@ -41,10 +39,11 @@ class Plant_Add : Fragment() {
             selectedImage = it
             plantImageView.setImageBitmap(it)
         } ?: run {
-            Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Failed to capture image", Toast.LENGTH_SHORT).show()
         }
     }
 
+    // Galerry Launcher
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
@@ -63,37 +62,16 @@ class Plant_Add : Fragment() {
         val view = inflater.inflate(R.layout.fragment_plant_add, container, false)
 
         // Initialize UI elements
-        backButton = view.findViewById(R.id.back_button) // Ensure this button exists in your layout
+        backButton = view.findViewById(R.id.back_button)
         savePlantButton = view.findViewById(R.id.save_plant_button)
         plantNameEditText = view.findViewById(R.id.plant_name)
         plantDescriptionEditText = view.findViewById(R.id.plantDescriptionEditText)
         plantCategorySpinner = view.findViewById(R.id.plantCategorySpinner)
-        plantWateringFrequencyEditText = view.findViewById(R.id.plantWateringFrequencyEditText)
-        plantTemperatureEditText = view.findViewById(R.id.plantTemperatureEditText)
-        plantDangerSwitch = view.findViewById(R.id.plantDangerSwitch)
-        lightLevelSeekBar = view.findViewById(R.id.lightLevelSeekBar)
         cameraButton = view.findViewById(R.id.camera_button)
         galleryButton = view.findViewById(R.id.gallery_button)
         plantImageView = view.findViewById(R.id.plant_image)
 
         loadCategories()
-
-        backButton.setOnClickListener {
-            // Navigate back to Plant_Storage fragment
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, Plant_Storage())
-            transaction.addToBackStack(null)
-            transaction.commit()
-        }
-        plantCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedCategory = categories[position]
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>?) {
-                selectedCategory = categories[0]
-            }
-        }
 
         cameraButton.setOnClickListener {
             cameraLauncher.launch(null)
@@ -103,81 +81,96 @@ class Plant_Add : Fragment() {
             galleryLauncher.launch("image/*")
         }
 
-
         savePlantButton.setOnClickListener {
-            // Handle saving plant data
             val plantName = plantNameEditText.text.toString()
             val plantDescription = plantDescriptionEditText.text.toString()
-            val wateringFrequency = plantWateringFrequencyEditText.text.toString()
-            val temperature = plantTemperatureEditText.text.toString()
-            val isDangerous = plantDangerSwitch.isChecked
-            val lightLevel = lightLevelSeekBar.progress
+            val category = selectedCategory.trim()
 
-            if (plantName.isNotEmpty() && plantDescription.isNotEmpty() && selectedImage != null) {
-                savePlantData(plantName, plantDescription, selectedCategory, wateringFrequency, temperature, isDangerous, lightLevel)
+            if (plantName.isNotEmpty() && plantDescription.isNotEmpty() && selectedImage != null && category.isNotEmpty()) {
+                savePlantData(plantName, plantDescription, category)
             } else {
-                Toast.makeText(context, "Please fill all fields and select an image.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Please fill all fields and select a category.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+
+        backButton.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         return view
     }
 
+    // Fungsi untuk memuat kategori dari Firestore
     private fun loadCategories() {
         firestore.collection("categories")
             .get()
             .addOnSuccessListener { documents ->
                 categories.clear()
-                categories.addAll(listOf("Kitchen", "Bedroom", "Laundry Room", "Living Room")) // Add locations
+                categories.addAll(listOf("Kitchen", "Bedroom", "Laundry Room", "Living Room"))
                 for (document in documents) {
                     val categoryName = document.getString("name") ?: ""
                     categories.add(categoryName)
                 }
+
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 plantCategorySpinner.adapter = adapter
+
+                // Listener untuk spinner
+                plantCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        selectedCategory = categories[position]
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                        selectedCategory = ""
+                    }
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to load categories", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun savePlantData(
-        name: String, description: String, category: String,
-        watering: String, temperature: String, danger: Boolean, light: Int
-    ) {
+    // Fungsi untuk menyimpan data tanaman ke Firestore
+    private fun savePlantData(name: String, description: String, category: String) {
+        Log.d("Plant_Add", "Saving plant with category: $category") // Debug kategori
+
         val plantData = mapOf(
             "name" to name,
             "description" to description,
             "category" to category,
-            "watering_frequency" to watering,
-            "temperature" to temperature,
-            "danger" to danger,
-            "light_level" to light
+            "imageUrl" to ""
         )
 
-        firestore.collection("plants")
-            .add(plantData)
-            .addOnSuccessListener {
-                selectedImage?.let { image -> uploadToFirebase(image) }
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to add plant", Toast.LENGTH_SHORT).show()
-            }
+        selectedImage?.let { image ->
+            val storageRef = storage.reference.child("plants/images/${System.currentTimeMillis()}.jpg")
+            val baos = ByteArrayOutputStream()
+            image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val data = baos.toByteArray()
+
+            storageRef.putBytes(data)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val updatedPlantData = plantData.toMutableMap()
+                        updatedPlantData["imageUrl"] = uri.toString()
+                        firestore.collection("plants")
+                            .add(updatedPlantData)
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Plant added successfully", Toast.LENGTH_SHORT).show()
+                                requireActivity().supportFragmentManager.popBackStack()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Failed to add plant", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
-    private fun uploadToFirebase(bitmap: Bitmap) {
-        val storageRef = storage.reference.child("plants/images/${System.currentTimeMillis()}.jpg")
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
 
-        storageRef.putBytes(data)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
-            }
-    }
 }

@@ -15,16 +15,6 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
-        android:layout_marginBottom="4dp" />
-
-    <!-- Lokasi kategori -->
-    <TextView
-        android:id="@+id/category_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
         android:layout_marginBottom="8dp" />
 
     <!-- RecyclerView untuk menampilkan gambar tanaman -->
