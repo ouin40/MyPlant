@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,11 +59,21 @@ class Profile : Fragment() {
 
         // Set logout button to sign out
         logoutButton.setOnClickListener {
+            // Logout dari Firebase Auth
             auth.signOut()
+
+            // Menghapus status first launch di SharedPreferences
+            val sharedPreferences = requireActivity().getSharedPreferences("AppPreferences", AppCompatActivity.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.remove("isFirstLaunch")  // Hapus status first launch
+            editor.apply()
+
+            // Pindah ke halaman login
             val intent = Intent(requireContext(), Login::class.java)
             startActivity(intent)
             activity?.finish()
         }
+
 
         return view
     }
