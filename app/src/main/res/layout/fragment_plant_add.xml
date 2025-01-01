@@ -122,14 +122,33 @@
             android:text="Is this plant dangerous?" />
 
         <!-- SeekBar untuk Tingkat Cahaya -->
-        <SeekBar
-            android:id="@+id/lightLevelSeekBar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginBottom="16dp"
-            android:max="100"
-            android:minHeight="48dp"
-            android:progress="50" />
+            android:padding="8dp">
+
+            <!-- Brightness Icon -->
+            <ImageView
+                android:id="@+id/brightnessIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_brightness" />
+
+            <!-- SeekBar for Brightness -->
+            <SeekBar
+                android:id="@+id/lightLevelSeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="50"
+                android:thumbTint="@color/primary"/>
+        </LinearLayout>
+
 
         <!-- Button untuk Menyimpan Tanaman -->
         <Button
@@ -138,7 +157,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:minHeight="48dp"
-            android:text="Save Plant" />
+            android:text="Save Plant"
+            android:backgroundTint="@color/dark_primary"/>
 
     </LinearLayout>
 </ScrollView>
