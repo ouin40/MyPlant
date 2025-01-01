@@ -9,6 +9,17 @@
     android:orientation="vertical"
     tools:context=".Login">
 
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/myplant_text" />
+
+
+
     <!--judul login-->
     <TextView
         android:layout_width="match_parent"
@@ -23,8 +34,15 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="25dp">
-        <!--input text loginnya-->
+        android:paddingHorizontal="25dp"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:boxStrokeColor="@color/dark_primary"
+        app:boxStrokeWidth="2dp">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
             android:layout_width="match_parent"
@@ -34,11 +52,19 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!--ini yg password-->
+    <!-- Password Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="25dp"
-        app:passwordToggleEnabled="true">
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:passwordToggleEnabled="true"
+        app:boxStrokeColor="@color/dark_primary"
+        app:boxStrokeWidth="2dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
@@ -70,11 +96,11 @@
     <!--buat button login-->
     <Button
         android:id="@+id/btn_login"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/primary"
+        android:backgroundTint="@color/dark_primary"
         android:text="@string/login"
         android:textStyle="bold" />
 

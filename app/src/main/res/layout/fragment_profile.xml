@@ -53,6 +53,7 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+
         <!-- Edit Profile Button -->
         <Button
             android:id="@+id/edit_profile_button"
@@ -99,8 +100,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="50dp"
-            android:backgroundTint="@color/red"
+            android:layout_marginBottom="80dp"
+            android:backgroundTint="@color/dark_red"
             android:text="@string/logout" />
     </RelativeLayout>
 </FrameLayout>

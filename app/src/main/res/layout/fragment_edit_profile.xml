@@ -20,7 +20,7 @@
             android:textAlignment="center"
             android:textSize="30sp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="70dp"
             android:layout_marginBottom="20dp"
             android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/user_details"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:layout_marginHorizontal="32dp"
             android:hint="Enter your name"
             android:textSize="18sp"
@@ -63,8 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="50dp"
-            android:backgroundTint="@color/accent"
+            android:layout_marginBottom="70dp"
+            android:backgroundTint="@color/primary"
             android:text="@string/save" />
     </RelativeLayout>
 
