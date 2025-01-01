@@ -4,5 +4,5 @@ import android.graphics.Bitmap
 
 data class Category(
     val name: String,
-    var plants: MutableList<Bitmap>
+    val plants: MutableList<Pair<String, Bitmap>> // Pasangan nama dan gambar
 )

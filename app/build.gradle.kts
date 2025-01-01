@@ -46,21 +46,29 @@ android {
 
 dependencies {
 
+    // Core dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Firebase dependencies
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics.buildtools)
+
+    // Firebase App Check Debug
+    implementation("com.google.firebase:firebase-appcheck-debug:16.0.0")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation (libs.firebase.firestore.ktx.v2471)
+
 
 
     //CALENDAR

@@ -72,22 +72,30 @@ class Plant_Storage : Fragment() {
                 val predefinedCategories = listOf("Kitchen", "Bedroom", "Laundry Room", "Living Room")
                     .map { it.trim().lowercase() } // Standarisasi
 
-                val categoryMap = predefinedCategories.associateWith { mutableListOf<Bitmap>() }.toMutableMap()
+                val categoryMap = predefinedCategories.associateWith { mutableListOf<Pair<String, Bitmap>>() }.toMutableMap()
 
                 val documents = firestore.collection("plants").get().await()
 
                 for (document in documents) {
                     val category = document.getString("category")?.trim()?.lowercase() ?: "uncategorized"
                     val imageUrl = document.getString("imageUrl")
+                    val plantName = document.getString("name") ?: "Unnamed Plant"
+
+                    Log.d("Firestore", "Plant Name: $plantName, Image URL: $imageUrl")
+
+                    if (imageUrl.isNullOrEmpty()) {
+                        Log.e("Plant_Storage", "Image URL is missing for document: ${document.id}")
+                        continue // Lewati dokumen ini jika URL kosong
+                    }
 
                     Log.d("Plant_Storage", "Document category: $category") // Debugging
 
-                    if (predefinedCategories.contains(category) && imageUrl != null) {
+                    if (predefinedCategories.contains(category)) {
                         val bitmap = downloadImage(imageUrl)
-                        bitmap?.let { categoryMap[category]?.add(it) }
+                        bitmap?.let { categoryMap[category]?.add(Pair(plantName, it)) }
                     } else {
-                        val bitmap = downloadImage(imageUrl ?: "")
-                        bitmap?.let { categoryMap.getOrPut("uncategorized") { mutableListOf() }.add(it) }
+                        val bitmap = downloadImage(imageUrl)
+                        bitmap?.let { categoryMap.getOrPut("uncategorized") { mutableListOf() }.add(Pair(plantName, it)) }
                     }
                 }
 
@@ -108,9 +116,15 @@ class Plant_Storage : Fragment() {
         }
     }
 
-    private suspend fun downloadImage(url: String): Bitmap? {
+
+
+    private suspend fun downloadImage(url: String?): Bitmap? {
         return withContext(Dispatchers.IO) {
             try {
+                if (url.isNullOrEmpty()) {
+                    Log.e("Plant_Storage", "Image URL is null or empty")
+                    return@withContext null
+                }
                 val ref = storage.getReferenceFromUrl(url)
                 val bytes = ref.getBytes(1024 * 1024).await()
                 BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -120,6 +134,7 @@ class Plant_Storage : Fragment() {
             }
         }
     }
+
 
     // permintaan izin kamera
     override fun onRequestPermissionsResult(

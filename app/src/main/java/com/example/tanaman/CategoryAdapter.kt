@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -25,10 +26,17 @@ class CategoryAdapter(private val categories: ArrayList<Category>) :
         val category = categories[position]
         holder.categoryTitle.text = category.name
 
+        // Pastikan data plants memiliki pasangan nama dan gambar
+        val plantsWithNames = category.plants
+
         holder.plantRecyclerView.layoutManager =
             LinearLayoutManager(holder.itemView.context, LinearLayoutManager.HORIZONTAL, false)
-        holder.plantRecyclerView.adapter = PlantImageAdapter(category.plants)
+        holder.plantRecyclerView.adapter = PlantImageAdapter(plantsWithNames) { plantName ->
+            // Callback tombol edit
+            Toast.makeText(holder.itemView.context, "Edit $plantName clicked", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     override fun getItemCount(): Int {
         return categories.size

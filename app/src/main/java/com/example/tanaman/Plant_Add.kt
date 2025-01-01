@@ -24,8 +24,12 @@ class Plant_Add : Fragment() {
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
     private lateinit var plantImageView: ImageView
-    private var selectedImage: Bitmap? = null
+    private lateinit var plantDangerSwitch: Switch
+    private lateinit var lightLevelSeekBar: SeekBar
+    private lateinit var plantTemperatureEditText: EditText
+    private lateinit var plantWateringFrequencyEditText: EditText
 
+    private var selectedImage: Bitmap? = null
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
     private val categories = mutableListOf<String>()
@@ -43,7 +47,7 @@ class Plant_Add : Fragment() {
         }
     }
 
-    // Galerry Launcher
+    // Gallery Launcher
     private val galleryLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
@@ -70,6 +74,10 @@ class Plant_Add : Fragment() {
         cameraButton = view.findViewById(R.id.camera_button)
         galleryButton = view.findViewById(R.id.gallery_button)
         plantImageView = view.findViewById(R.id.plant_image)
+        plantDangerSwitch = view.findViewById(R.id.plantDangerSwitch)
+        lightLevelSeekBar = view.findViewById(R.id.lightLevelSeekBar)
+        plantTemperatureEditText = view.findViewById(R.id.plantTemperatureEditText)
+        plantWateringFrequencyEditText = view.findViewById(R.id.plantWateringFrequencyEditText)
 
         loadCategories()
 
@@ -93,7 +101,6 @@ class Plant_Add : Fragment() {
             }
         }
 
-
         backButton.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
@@ -101,7 +108,6 @@ class Plant_Add : Fragment() {
         return view
     }
 
-    // Fungsi untuk memuat kategori dari Firestore
     private fun loadCategories() {
         firestore.collection("categories")
             .get()
@@ -117,7 +123,6 @@ class Plant_Add : Fragment() {
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 plantCategorySpinner.adapter = adapter
 
-                // Listener untuk spinner
                 plantCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                         selectedCategory = categories[position]
@@ -133,15 +138,21 @@ class Plant_Add : Fragment() {
             }
     }
 
-    // Fungsi untuk menyimpan data tanaman ke Firestore
     private fun savePlantData(name: String, description: String, category: String) {
-        Log.d("Plant_Add", "Saving plant with category: $category") // Debug kategori
+        val danger = plantDangerSwitch.isChecked
+        val lightLevel = lightLevelSeekBar.progress
+        val temperature = plantTemperatureEditText.text.toString()
+        val wateringFrequency = plantWateringFrequencyEditText.text.toString()
 
         val plantData = mapOf(
             "name" to name,
             "description" to description,
             "category" to category,
-            "imageUrl" to ""
+            "imageUrl" to "",
+            "danger" to danger,
+            "light_level" to lightLevel,
+            "temperature" to temperature,
+            "watering_frequency" to wateringFrequency
         )
 
         selectedImage?.let { image ->
@@ -171,6 +182,4 @@ class Plant_Add : Fragment() {
                 }
         }
     }
-
-
 }
