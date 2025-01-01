@@ -4,39 +4,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:background="@drawable/rounded_background"
+    android:padding="16dp"
+    android:elevation="4dp"
+    android:layout_marginBottom="10dp">
 
+    <!-- Plant Image -->
     <ImageView
         android:id="@+id/iv_plant_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/plant1" />
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/plant1"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circle_background"
+        android:contentDescription="@null" />
 
+    <!-- Text Section -->
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingStart="8dp">
+        android:paddingStart="16dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tv_plant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Plant Name"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_water_quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Water Quantity" />
+            android:text="Water Quantity"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
     </LinearLayout>
 
+    <!-- Action Icon -->
     <ImageView
         android:id="@+id/iv_action_icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_background"
+        android:contentDescription="@null"
+        android:padding="8dp"
         android:src="@drawable/baseline_water_drop_24"
-        app:tint="@color/accent" />
+        app:tint="@color/putih" />
 </LinearLayout>
