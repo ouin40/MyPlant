@@ -57,6 +57,19 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- Email TextView -->
+        <TextView
+            android:id="@+id/user_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="Email"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="italic" />
+
 
         <!-- Edit Profile Button -->
         <Button
@@ -65,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/user_name"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:backgroundTint="@color/dark_primary"
             android:text="@string/edit_profile" />
 

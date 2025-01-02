@@ -24,6 +24,7 @@ class Profile : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var user: FirebaseUser? = null
     private lateinit var userNameTextView: TextView
+    private lateinit var userEmailTextView: TextView
     private lateinit var userProfileImageView: ImageView
     private lateinit var editProfileButton: Button
     private lateinit var logoutButton: Button
@@ -41,11 +42,12 @@ class Profile : Fragment() {
 
         // Bind UI elements
         userNameTextView = view.findViewById(R.id.user_name)
+        userEmailTextView = view.findViewById(R.id.user_email)
         userProfileImageView = view.findViewById(R.id.profile_image)
         editProfileButton = view.findViewById(R.id.edit_profile_button)
         logoutButton = view.findViewById(R.id.logout)
 
-        // Load user name and profile image from Firestore
+        // Load user name, email, and profile image from Firestore
         loadUserProfile()
 
         // Set edit profile button to open EditProfile fragment
@@ -82,16 +84,20 @@ class Profile : Fragment() {
                         val name = document.getString("name") ?: "No Name"
                         userNameTextView.text = name
 
+                        // Load email
+                        val email = document.getString("email") ?: it.email ?: "No Email"
+                        userEmailTextView.text = email
+
                         // Load profile image
                         document.getString("profileImage")?.let { imageUrl ->
                             val imageUri = Uri.parse(imageUrl)
                             loadProfileImage(imageUri)  // Call the method to load image as Bitmap
                         } ?: run {
-                            // Set a default image if no profile image is found
                             userProfileImageView.setImageResource(R.drawable.baseline_account_circle_24)
                         }
                     } else {
                         userNameTextView.text = "No Name"
+                        userEmailTextView.text = "No Email"
                         userProfileImageView.setImageResource(R.drawable.baseline_account_circle_24)
                     }
                 }
