@@ -58,12 +58,12 @@ class Plant_Storage : Fragment() {
     }
 
     private fun navigateToAddPlant() {
-        addPlantButton.visibility = View.GONE // Sembunyikan tombol sementara
         val transaction = requireActivity().supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, Plant_Add())
+        transaction.replace(R.id.frame_layout, Plant_Add()) // Gunakan frame_layout di activity_main.xml
         transaction.addToBackStack(null)
         transaction.commit()
     }
+
 
     // Fungsi untuk memuat kategori dan data tanaman dari Firestore
     private fun loadCategoriesAndPlants() {

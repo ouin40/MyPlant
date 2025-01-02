@@ -43,10 +43,23 @@ class PlantImageAdapter(
             fragment.arguments = bundle
 
             val transaction = (holder.itemView.context as AppCompatActivity).supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.fragment_container, fragment)
+            transaction.replace(R.id.frame_layout, fragment)
             transaction.addToBackStack(null)
             transaction.commit()
         }
+
+        holder.itemView.setOnClickListener {
+            val fragment = PlantDetail()
+            val bundle = Bundle()
+            bundle.putString("plantId", plantId) // Pass plantId
+            fragment.arguments = bundle
+
+            val transaction = (holder.itemView.context as AppCompatActivity).supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.frame_layout, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
+
     }
 
     override fun getItemCount() = plants.size

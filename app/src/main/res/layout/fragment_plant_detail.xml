@@ -1,0 +1,132 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Tombol Back -->
+        <Button
+            android:id="@+id/plant_detail_back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="start|top"
+            android:layout_margin="16dp"
+            android:background="@drawable/ic_back"
+            android:contentDescription="Back" />
+
+        <!-- Gambar Tanaman -->
+        <ImageView
+            android:id="@+id/plant_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Nama Tanaman -->
+        <TextView
+            android:id="@+id/plant_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plant Name"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Informasi Sejajar Horizontal -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Temperature -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Temperature"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/plant_detail_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100°C" />
+            </LinearLayout>
+
+            <!-- Watering Frequency -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Watering"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/plant_detail_watering_frequency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12 times/week" />
+            </LinearLayout>
+
+            <!-- Danger -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Danger"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/plant_detail_danger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No" />
+            </LinearLayout>
+
+            <!-- Light Level -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Light Level"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/plant_detail_light_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="26%" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Deskripsi -->
+        <TextView
+            android:id="@+id/plant_detail_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is the plant description."
+            android:layout_marginTop="16dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+</ScrollView>
