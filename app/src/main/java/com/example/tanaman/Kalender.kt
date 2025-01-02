@@ -25,7 +25,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
-
 class Kalender : Fragment() {
 
     private lateinit var calendarView: CalendarView
@@ -33,6 +32,8 @@ class Kalender : Fragment() {
     private lateinit var taskAdapter: WateringTaskAdapter
     private var events: MutableMap<String, MutableList<WateringTask>> = mutableMapOf()
     private val db = FirebaseFirestore.getInstance()
+    private var selectedDateKey: String? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,22 +75,26 @@ class Kalender : Fragment() {
                 val month = String.format("%02d", calendarDay.calendar.get(Calendar.MONTH) + 1)
                 val year = calendarDay.calendar.get(Calendar.YEAR)
 
-                val key = "$day-$month-$year"
-                if (events.containsKey(key)) {
-                    // Update RecyclerView with tasks for the selected date
-                    val tasksForDate = events[key] ?: emptyList()
-                    taskAdapter.updateData(tasksForDate)
-                } else {
-                    taskAdapter.updateData(emptyList())
-                    Toast.makeText(context, "Nothing to do", Toast.LENGTH_SHORT).show()
-                }
+                selectedDateKey = "$day-$month-$year" // Store selected date
+                updateTaskListForDate(selectedDateKey)
             }
         })
 
         return view
     }
 
-    private fun fetchEventsFromFirebase() {
+    private fun updateTaskListForDate(dateKey: String?) {
+        if (dateKey != null && events.containsKey(dateKey)) {
+            val tasksForDate = events[dateKey] ?: emptyList()
+            taskAdapter.updateData(tasksForDate)
+        } else {
+            taskAdapter.updateData(emptyList())
+            Toast.makeText(context, "Nothing to do", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun fetchEventsFromFirebase(onComplete: (() -> Unit)? = null) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         db.collection("events").get()
@@ -120,9 +125,11 @@ class Kalender : Fragment() {
                     events[dateKey] = tasks.toMutableList()
                 }
                 updateCalendar()
+                onComplete?.invoke() // Trigger callback
             }
             .addOnFailureListener { exception ->
                 android.util.Log.e("Kalender", "Error fetching events: ${exception.message}")
+                onComplete?.invoke() // Still invoke callback to ensure UI state is consistent
             }
     }
 
@@ -179,7 +186,8 @@ class Kalender : Fragment() {
                 val year = selectedDate.get(Calendar.YEAR)
                 val key = "$day-$month-$year"
 
-                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
+                val userId =
+                    FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
                 val newTask = WateringTask(
                     plantName = plantName,
                     waterQuantity = waterQuantity,
@@ -231,7 +239,7 @@ class Kalender : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        fetchEventsFromFirebase()
+        fetchEventsFromFirebase { updateTaskListForDate(selectedDateKey) }
     }
 
 }
