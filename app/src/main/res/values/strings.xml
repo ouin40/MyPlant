@@ -34,4 +34,5 @@
     <string name="add_watering_task">Add Watering Task</string>
     <string name="plant_name">Plant name</string>
     <string name="water_quantity">Water quantity</string>
+    <string name="profile_image">Profile Image</string>
 </resources>

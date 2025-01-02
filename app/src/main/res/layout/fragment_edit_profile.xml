@@ -24,13 +24,23 @@
             android:layout_marginBottom="20dp"
             android:textStyle="bold" />
 
+        <!-- Profile Image (Click to change) -->
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/edit_profile"
-            android:src="@drawable/baseline_account_circle_24" />
+            android:src="@drawable/baseline_account_circle_24"
+            android:contentDescription="@string/profile_image"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:background="@drawable/circular_background" />  <!-- Circular background drawable -->
+
 
         <!-- User Details TextView -->
         <TextView
@@ -42,7 +52,8 @@
             android:text="@string/user"
             android:textAlignment="center"
             android:textSize="25sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginTop="20dp" />
 
         <!-- Name EditText -->
         <EditText
@@ -54,9 +65,10 @@
             android:layout_marginHorizontal="32dp"
             android:hint="Enter your name"
             android:textSize="18sp"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:layout_marginBottom="20dp" />
 
-        <!-- save Button -->
+        <!-- Save Button -->
         <Button
             android:id="@+id/save"
             android:layout_width="150dp"
@@ -66,6 +78,7 @@
             android:layout_marginBottom="70dp"
             android:backgroundTint="@color/primary"
             android:text="@string/save" />
+
     </RelativeLayout>
 
 </FrameLayout>
