@@ -41,7 +41,7 @@ class Home : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val sections = listOf(
-            HomeSection("Kalender", "Manage your plant's watering schedule", R.drawable.calendar, Kalender()),
+            HomeSection("Calendar", "Manage your plant's watering schedule", R.drawable.calendar, Kalender()),
             HomeSection("Plant Storage", "View and organize your plants", R.drawable.plant, Plant_Storage()),
             HomeSection("Profile", "View your profile and settings", R.drawable.profile, Profile())
         )
@@ -51,6 +51,15 @@ class Home : Fragment() {
                 .replace(R.id.frame_layout, fragment)
                 .addToBackStack(null)
                 .commit()
+
+            // Sync BottomNavigationView
+            val navId = when (fragment) {
+                is Kalender -> R.id.kalender
+                is Plant_Storage -> R.id.plant
+                is Profile -> R.id.profile
+                else -> R.id.home
+            }
+            (activity as? MainActivity)?.binding?.bottomNavigationView?.selectedItemId = navId
         }
 
         return view
