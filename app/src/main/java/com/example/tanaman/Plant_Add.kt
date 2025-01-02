@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
 import android.graphics.BitmapFactory
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
@@ -32,6 +33,7 @@ class Plant_Add : Fragment() {
     private var selectedImage: Bitmap? = null
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val categories = mutableListOf<String>()
     private var selectedCategory: String = ""
 
@@ -199,6 +201,7 @@ class Plant_Add : Fragment() {
         val wateringFrequency = plantWateringFrequencyEditText.text.toString()
 
         val updatedData = mutableMapOf<String, Any>(
+            "userId" to auth.currentUser!!.uid,
             "name" to name,
             "description" to description,
             "category" to category,
@@ -207,6 +210,7 @@ class Plant_Add : Fragment() {
             "temperature" to temperature,
             "watering_frequency" to wateringFrequency
         )
+
 
         if (isEditMode && plantId != null) {
             // Perbarui dokumen yang ada

@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,7 @@ class Plant_Storage : Fragment() {
     private val categories = arrayListOf<Category>()
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 1001
 
@@ -64,9 +66,14 @@ class Plant_Storage : Fragment() {
         transaction.commit()
     }
 
-
     // Fungsi untuk memuat kategori dan data tanaman dari Firestore
     private fun loadCategoriesAndPlants() {
+        val user = auth.currentUser
+        if (user == null) {
+            Toast.makeText(context, "User not logged in.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         lifecycleScope.launch {
             try {
                 val predefinedCategories = listOf("Kitchen", "Bedroom", "Laundry Room", "Living Room")
@@ -74,7 +81,10 @@ class Plant_Storage : Fragment() {
 
                 val categoryMap = predefinedCategories.associateWith { mutableListOf<Triple<String, String, Bitmap>>() }.toMutableMap()
 
-                val documents = firestore.collection("plants").get().await()
+                val documents = firestore.collection("plants")
+                    .whereEqualTo("userId", user.uid) // Filter berdasarkan ID pengguna
+                    .get()
+                    .await()
 
                 for (document in documents) {
                     val plantId = document.id
