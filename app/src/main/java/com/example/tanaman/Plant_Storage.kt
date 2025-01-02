@@ -53,7 +53,7 @@ class Plant_Storage : Fragment() {
         super.onResume()
         if (::addPlantButton.isInitialized) {
             addPlantButton.visibility = View.VISIBLE
-            Log.d("Plant_Storage", "Add Plant button set to VISIBLE in onResume")
+            loadCategoriesAndPlants() // Reload data setiap kali kembali ke fragment ini
         }
     }
 
@@ -70,32 +70,28 @@ class Plant_Storage : Fragment() {
         lifecycleScope.launch {
             try {
                 val predefinedCategories = listOf("Kitchen", "Bedroom", "Laundry Room", "Living Room")
-                    .map { it.trim().lowercase() } // Standarisasi
+                    .map { it.trim().lowercase() }
 
-                val categoryMap = predefinedCategories.associateWith { mutableListOf<Pair<String, Bitmap>>() }.toMutableMap()
+                val categoryMap = predefinedCategories.associateWith { mutableListOf<Triple<String, String, Bitmap>>() }.toMutableMap()
 
                 val documents = firestore.collection("plants").get().await()
 
                 for (document in documents) {
+                    val plantId = document.id
+                    val plantName = document.getString("name") ?: "Unnamed Plant"
                     val category = document.getString("category")?.trim()?.lowercase() ?: "uncategorized"
                     val imageUrl = document.getString("imageUrl")
-                    val plantName = document.getString("name") ?: "Unnamed Plant"
 
-                    Log.d("Firestore", "Plant Name: $plantName, Image URL: $imageUrl")
-
-                    if (imageUrl.isNullOrEmpty()) {
-                        Log.e("Plant_Storage", "Image URL is missing for document: ${document.id}")
-                        continue // Lewati dokumen ini jika URL kosong
-                    }
-
-                    Log.d("Plant_Storage", "Document category: $category") // Debugging
-
-                    if (predefinedCategories.contains(category)) {
+                    if (!imageUrl.isNullOrEmpty()) {
                         val bitmap = downloadImage(imageUrl)
-                        bitmap?.let { categoryMap[category]?.add(Pair(plantName, it)) }
-                    } else {
-                        val bitmap = downloadImage(imageUrl)
-                        bitmap?.let { categoryMap.getOrPut("uncategorized") { mutableListOf() }.add(Pair(plantName, it)) }
+                        bitmap?.let {
+                            val plantData = Triple(plantId, plantName, it)
+                            if (categoryMap.containsKey(category)) {
+                                categoryMap[category]?.add(plantData)
+                            } else {
+                                categoryMap.getOrPut("uncategorized") { mutableListOf() }.add(plantData)
+                            }
+                        }
                     }
                 }
 
@@ -116,8 +112,6 @@ class Plant_Storage : Fragment() {
         }
     }
 
-
-
     private suspend fun downloadImage(url: String?): Bitmap? {
         return withContext(Dispatchers.IO) {
             try {
@@ -135,8 +129,7 @@ class Plant_Storage : Fragment() {
         }
     }
 
-
-    // permintaan izin kamera
+    // Permintaan izin kamera
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {

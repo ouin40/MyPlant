@@ -35,6 +35,10 @@ class Plant_Add : Fragment() {
     private val categories = mutableListOf<String>()
     private var selectedCategory: String = ""
 
+    private var isEditMode: Boolean = false
+    private var plantId: String? = null
+
+
     // Camera Launcher
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.TakePicturePreview()
@@ -64,6 +68,16 @@ class Plant_Add : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_plant_add, container, false)
+
+        // Periksa apakah halaman ini dibuka dalam mode edit
+        val arguments = arguments
+        if (arguments != null) {
+            isEditMode = arguments.getBoolean("isEditMode", false)
+            plantId = arguments.getString("plantId")
+            if (isEditMode && plantId != null) {
+                loadPlantData(plantId!!)
+            }
+        }
 
         // Initialize UI elements
         backButton = view.findViewById(R.id.back_button)
@@ -108,6 +122,46 @@ class Plant_Add : Fragment() {
         return view
     }
 
+    private fun loadPlantData(plantId: String) {
+        firestore.collection("plants").document(plantId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    plantNameEditText.setText(document.getString("name"))
+                    plantDescriptionEditText.setText(document.getString("description"))
+                    plantCategorySpinner.setSelection(categories.indexOf(document.getString("category")))
+                    plantDangerSwitch.isChecked = document.getBoolean("danger") == true
+                    lightLevelSeekBar.progress = (document.getLong("light_level") ?: 0).toInt()
+                    plantTemperatureEditText.setText(document.getString("temperature"))
+                    plantWateringFrequencyEditText.setText(document.getString("watering_frequency"))
+
+                    val imageUrl = document.getString("imageUrl")
+                    if (!imageUrl.isNullOrEmpty()) {
+                        // Unduh gambar untuk ditampilkan
+                        downloadImage(imageUrl)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to load plant data", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun downloadImage(url: String) {
+        val storageRef = storage.getReferenceFromUrl(url)
+        storageRef.getBytes(1024 * 1024)
+            .addOnSuccessListener { bytes ->
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                selectedImage = bitmap
+                plantImageView.setImageBitmap(bitmap)
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to load plant image", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+
     private fun loadCategories() {
         firestore.collection("categories")
             .get()
@@ -144,42 +198,54 @@ class Plant_Add : Fragment() {
         val temperature = plantTemperatureEditText.text.toString()
         val wateringFrequency = plantWateringFrequencyEditText.text.toString()
 
-        val plantData = mapOf(
+        val updatedData = mutableMapOf<String, Any>(
             "name" to name,
             "description" to description,
             "category" to category,
-            "imageUrl" to "",
             "danger" to danger,
             "light_level" to lightLevel,
             "temperature" to temperature,
             "watering_frequency" to wateringFrequency
         )
 
-        selectedImage?.let { image ->
-            val storageRef = storage.reference.child("plants/images/${System.currentTimeMillis()}.jpg")
-            val baos = ByteArrayOutputStream()
-            image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val data = baos.toByteArray()
-
-            storageRef.putBytes(data)
+        if (isEditMode && plantId != null) {
+            // Perbarui dokumen yang ada
+            firestore.collection("plants").document(plantId!!)
+                .update(updatedData)
                 .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val updatedPlantData = plantData.toMutableMap()
-                        updatedPlantData["imageUrl"] = uri.toString()
-                        firestore.collection("plants")
-                            .add(updatedPlantData)
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "Plant added successfully", Toast.LENGTH_SHORT).show()
-                                requireActivity().supportFragmentManager.popBackStack()
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(context, "Failed to add plant", Toast.LENGTH_SHORT).show()
-                            }
-                    }
+                    Toast.makeText(context, "Plant updated successfully", Toast.LENGTH_SHORT).show()
+                    requireActivity().supportFragmentManager.popBackStack()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Failed to update plant", Toast.LENGTH_SHORT).show()
                 }
+        } else {
+            // Tambahkan dokumen baru
+            selectedImage?.let { image ->
+                val storageRef = storage.reference.child("plants/images/${System.currentTimeMillis()}.jpg")
+                val baos = ByteArrayOutputStream()
+                image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+
+                storageRef.putBytes(data)
+                    .addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener { uri ->
+                            updatedData["imageUrl"] = uri.toString()
+                            firestore.collection("plants")
+                                .add(updatedData)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Plant added successfully", Toast.LENGTH_SHORT).show()
+                                    requireActivity().supportFragmentManager.popBackStack()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Failed to add plant", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
     }
 }
