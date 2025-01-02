@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,9 +35,27 @@ class Home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.homeRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val sections = listOf(
+            HomeSection("Kalender", "Manage your plant's watering schedule", R.drawable.calendar, Kalender()),
+            HomeSection("Plant Storage", "View and organize your plants", R.drawable.plant, Plant_Storage()),
+            HomeSection("Profile", "View your profile and settings", R.drawable.profile, Profile())
+        )
+
+        recyclerView.adapter = HomeAdapter(sections) { fragment ->
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frame_layout, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        return view
     }
+
 
     companion object {
         /**
