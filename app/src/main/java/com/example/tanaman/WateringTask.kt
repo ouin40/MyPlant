@@ -5,5 +5,6 @@ data class WateringTask(
     val waterQuantity: String = "",
     val imageResource: Int = 0,
     val actionIconResource: Int = 0,
-    var isDone: Boolean = false
+    var isDone: Boolean = false,
+    val userId: String = ""
 )

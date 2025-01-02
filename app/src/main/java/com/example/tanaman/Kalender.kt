@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import androidx.appcompat.app.AlertDialog
 import com.google.common.reflect.TypeToken
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.logging.Log
 import com.google.firebase.events.Event
 import com.google.firebase.firestore.ktx.firestore
@@ -89,26 +90,28 @@ class Kalender : Fragment() {
     }
 
     private fun fetchEventsFromFirebase() {
-        val db = Firebase.firestore
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         db.collection("events").get()
             .addOnSuccessListener { querySnapshot ->
                 events.clear()
                 for (document in querySnapshot.documents) {
                     val dateKey = document.id
-                    // Safely map the "tasks" array from Firestore
                     val taskList = document.get("tasks") as? List<Map<String, Any>> ?: emptyList()
 
-                    // Convert each task map to a WateringTask object
                     val tasks = taskList.mapNotNull { taskMap ->
                         try {
-                            WateringTask(
-                                plantName = taskMap["plantName"] as? String ?: "",
-                                waterQuantity = taskMap["waterQuantity"] as? String ?: "",
-                                imageResource = (taskMap["imageResource"] as? Long)?.toInt() ?: 0,
-                                actionIconResource = (taskMap["actionIconResource"] as? Long)?.toInt() ?: 0,
-                                isDone = taskMap["isDone"] as? Boolean ?: false
-                            )
+                            val taskUserId = taskMap["userId"] as? String
+                            if (taskUserId == userId) {
+                                WateringTask(
+                                    plantName = taskMap["plantName"] as? String ?: "",
+                                    waterQuantity = taskMap["waterQuantity"] as? String ?: "",
+                                    imageResource = (taskMap["imageResource"] as? Long)?.toInt() ?: 0,
+                                    actionIconResource = (taskMap["actionIconResource"] as? Long)?.toInt() ?: 0,
+                                    isDone = taskMap["isDone"] as? Boolean ?: false,
+                                    userId = taskUserId
+                                )
+                            } else null
                         } catch (e: Exception) {
                             android.util.Log.e("Kalender", "Error converting task: ${e.message}")
                             null
@@ -130,13 +133,17 @@ class Kalender : Fragment() {
         val year = selectedDate.get(Calendar.YEAR)
         val key = "$day-$month-$year"
 
+        // Include the userId in the task
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val taskWithUserId = task.copy(userId = userId)
+
         val tasksForDate = events[key] ?: mutableListOf()
-        if (!tasksForDate.contains(task)) {
-            tasksForDate.add(task)
+        if (!tasksForDate.contains(taskWithUserId)) {
+            tasksForDate.add(taskWithUserId)
         }
 
         db.collection("events").document(key)
-            .set(FirebaseEvent(tasksForDate))
+            .set(mapOf("tasks" to tasksForDate))
             .addOnSuccessListener {
                 Toast.makeText(context, "Task saved successfully!", Toast.LENGTH_SHORT).show()
             }
@@ -144,6 +151,7 @@ class Kalender : Fragment() {
                 Toast.makeText(context, "Failed to save task", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun showAddTaskDialog() {
         val dialogView =
@@ -171,12 +179,13 @@ class Kalender : Fragment() {
                 val year = selectedDate.get(Calendar.YEAR)
                 val key = "$day-$month-$year"
 
-                // Create a new task
+                val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setOnClickListener
                 val newTask = WateringTask(
                     plantName = plantName,
                     waterQuantity = waterQuantity,
                     imageResource = R.drawable.plant, // Placeholder image
-                    actionIconResource = R.drawable.baseline_water_drop_24
+                    actionIconResource = R.drawable.baseline_water_drop_24,
+                    userId = userId
                 )
 
                 // Save locally
