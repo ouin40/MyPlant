@@ -91,26 +91,61 @@
             android:textSize="18sp" />
 
         <!-- EditText untuk Suhu Tanaman -->
-        <EditText
-            android:id="@+id/plantTemperatureEditText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="16dp"
-            android:focusable="true"
-            android:hint="Enter plant temperature"
-            android:minHeight="48dp"
-            android:textSize="18sp" />
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/temperatureIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_temp"
+                android:layout_marginEnd="8dp" />
+
+            <EditText
+                android:id="@+id/plantTemperatureEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter plant temperature"
+                android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
 
         <!-- EditText untuk Frekuensi Penyiraman -->
-        <EditText
-            android:id="@+id/plantWateringFrequencyEditText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="16dp"
-            android:focusable="true"
-            android:hint="Enter watering frequency"
-            android:minHeight="48dp"
-            android:textSize="18sp" />
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/wateringFrequencyIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/baseline_water_drop_24"
+                android:layout_marginEnd="8dp"
+                android:tint="@color/gray"/>
+
+            <EditText
+                android:id="@+id/plantWateringFrequencyEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter watering frequency"
+                android:inputType="number"
+                android:minHeight="48dp"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
 
         <!-- Switch untuk Menandakan Bahaya Tanaman -->
         <Switch
