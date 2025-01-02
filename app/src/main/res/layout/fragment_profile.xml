@@ -38,7 +38,11 @@
             android:layout_below="@id/profile_title"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:src="@drawable/baseline_account_circle_24" />
+            android:src="@drawable/baseline_account_circle_24"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circular_background"
+            android:contentDescription="@string/profile_image" />
 
         <!-- Name TextView -->
         <TextView
