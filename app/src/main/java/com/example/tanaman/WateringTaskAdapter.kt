@@ -21,7 +21,8 @@ class WateringTaskAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WateringTaskViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_watering_task, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_watering_task, parent, false)
         return WateringTaskViewHolder(view)
     }
 
@@ -38,8 +39,12 @@ class WateringTaskAdapter(
             holder.actionIcon.setImageResource(R.drawable.baseline_water_drop_24)
         }
 
-        // Mark as done on icon click
-        holder.actionIcon.setOnClickListener { onTaskDone(task) }
+        // Handle task completion
+        holder.actionIcon.setOnClickListener {
+            if (!task.isDone) { // Prevent re-updating an already done task
+                onTaskDone(task) // Trigger the callback to update Firebase
+            }
+        }
     }
 
     override fun getItemCount(): Int = wateringTasks.size
@@ -49,3 +54,4 @@ class WateringTaskAdapter(
         notifyDataSetChanged()
     }
 }
+

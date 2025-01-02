@@ -55,14 +55,22 @@ class Kalender : Fragment() {
         taskRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         taskAdapter = WateringTaskAdapter(emptyList()) { task ->
             task.isDone = true
+            val selectedDate = selectedDateKey ?: return@WateringTaskAdapter
+
+            val tasksForDate = events[selectedDate]?.map {
+                if (it == task) it.copy(isDone = true) else it
+            }?.toMutableList() ?: mutableListOf()
+
+            events[selectedDate] = tasksForDate
             saveTaskToFirebase(task)
-            taskAdapter.notifyDataSetChanged()
+            taskAdapter.updateData(tasksForDate)
             Toast.makeText(
                 requireContext(),
                 "${task.plantName} marked as done!",
                 Toast.LENGTH_SHORT
             ).show()
         }
+
         taskRecyclerView.adapter = taskAdapter
 
         // Fetch tasks from Firebase
@@ -111,9 +119,12 @@ class Kalender : Fragment() {
                                 WateringTask(
                                     plantName = taskMap["plantName"] as? String ?: "",
                                     waterQuantity = taskMap["waterQuantity"] as? String ?: "",
-                                    imageResource = (taskMap["imageResource"] as? Long)?.toInt() ?: 0,
-                                    actionIconResource = (taskMap["actionIconResource"] as? Long)?.toInt() ?: 0,
-                                    isDone = taskMap["isDone"] as? Boolean ?: false,
+                                    imageResource = (taskMap["imageResource"] as? Long)?.toInt()
+                                        ?: 0,
+                                    actionIconResource = (taskMap["actionIconResource"] as? Long)?.toInt()
+                                        ?: 0,
+                                    isDone = taskMap["isDone"] as? Boolean
+                                        ?: false, // Load `isDone`
                                     userId = taskUserId
                                 )
                             } else null
@@ -125,11 +136,11 @@ class Kalender : Fragment() {
                     events[dateKey] = tasks.toMutableList()
                 }
                 updateCalendar()
-                onComplete?.invoke() // Trigger callback
+                onComplete?.invoke()
             }
             .addOnFailureListener { exception ->
                 android.util.Log.e("Kalender", "Error fetching events: ${exception.message}")
-                onComplete?.invoke() // Still invoke callback to ensure UI state is consistent
+                onComplete?.invoke()
             }
     }
 
@@ -140,25 +151,25 @@ class Kalender : Fragment() {
         val year = selectedDate.get(Calendar.YEAR)
         val key = "$day-$month-$year"
 
-        // Include the userId in the task
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val taskWithUserId = task.copy(userId = userId)
 
-        val tasksForDate = events[key] ?: mutableListOf()
-        if (!tasksForDate.contains(taskWithUserId)) {
-            tasksForDate.add(taskWithUserId)
-        }
+        val tasksForDate = events[key]?.map { existingTask ->
+            if (existingTask == task) {
+                task.copy(isDone = task.isDone) // Update the task's `isDone` status
+            } else {
+                existingTask
+            }
+        }?.toMutableList() ?: mutableListOf()
 
         db.collection("events").document(key)
             .set(mapOf("tasks" to tasksForDate))
             .addOnSuccessListener {
-                Toast.makeText(context, "Task saved successfully!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Task updated successfully!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Failed to save task", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to update task", Toast.LENGTH_SHORT).show()
             }
     }
-
 
     private fun showAddTaskDialog() {
         val dialogView =
