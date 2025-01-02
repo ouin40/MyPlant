@@ -34,7 +34,7 @@
             android:text="Plant Name"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="15dp" />
 
         <!-- Informasi Sejajar Horizontal -->
         <LinearLayout
@@ -50,11 +50,22 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
+
+                <!-- Temperature Icon -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_temp"
+                android:layout_marginBottom="8dp" />
+
+                <!-- Temperature Label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Temperature"
                     android:textStyle="bold" />
+
+                <!-- Temperature Value -->
                 <TextView
                     android:id="@+id/plant_detail_temperature"
                     android:layout_width="wrap_content"
@@ -69,17 +80,30 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
+
+                <!-- Watering Icon -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/baseline_water_drop_24"
+                    android:tint="@color/gray"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Watering Label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Watering"
                     android:textStyle="bold" />
+
+                <!-- Watering Frequency -->
                 <TextView
                     android:id="@+id/plant_detail_watering_frequency"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="12 times/week" />
             </LinearLayout>
+
 
             <!-- Danger -->
             <LinearLayout
@@ -88,17 +112,30 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
+
+                <!-- Danger Icon -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_danger"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Danger Label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Danger"
                     android:textStyle="bold" />
+
+                <!-- Danger Status -->
                 <TextView
                     android:id="@+id/plant_detail_danger"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No" />
             </LinearLayout>
+
+
 
             <!-- Light Level -->
             <LinearLayout
@@ -107,17 +144,29 @@
                 android:layout_weight="1"
                 android:orientation="vertical"
                 android:gravity="center">
+
+                <!-- Brightness Icon -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_brightness"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Light Level Label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Light Level"
                     android:textStyle="bold" />
+
+                <!-- Light Level Value -->
                 <TextView
                     android:id="@+id/plant_detail_light_level"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="26%" />
             </LinearLayout>
+
         </LinearLayout>
 
         <!-- Deskripsi -->
