@@ -79,6 +79,10 @@ class Kalender : Fragment() {
         // Handle calendar date click
         calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
+                val clickedDate = calendarDay.calendar
+
+                calendarView.setHighlightedDays(listOf(clickedDate))
+
                 val day = String.format("%02d", calendarDay.calendar.get(Calendar.DAY_OF_MONTH))
                 val month = String.format("%02d", calendarDay.calendar.get(Calendar.MONTH) + 1)
                 val year = calendarDay.calendar.get(Calendar.YEAR)
@@ -97,10 +101,9 @@ class Kalender : Fragment() {
             taskAdapter.updateData(tasksForDate)
         } else {
             taskAdapter.updateData(emptyList())
-            Toast.makeText(context, "Nothing to do", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Nothing to do", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     private fun fetchEventsFromFirebase(onComplete: (() -> Unit)? = null) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -250,6 +253,15 @@ class Kalender : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        val selectedCalendar = Calendar.getInstance()
+        selectedDateKey?.let {
+            val parts = it.split("-")
+            if (parts.size == 3) {
+                selectedCalendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+            }
+        }
+        calendarView.setHighlightedDays(listOf(selectedCalendar))
         fetchEventsFromFirebase { updateTaskListForDate(selectedDateKey) }
     }
 
